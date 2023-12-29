@@ -1,6 +1,6 @@
 # Prediction Stock With Python Project
 
-![Project Image](![image](https://github.com/davisduccopny/Stock-Prediction-with-Python-project/assets/129922030/d32283d0-370a-4d3e-bc54-55bb9ef9086e))
+![Project Image](https://enlight.nyc/img/stock.png)
 
 ## Mục Đích Dự Án
 
