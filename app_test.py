@@ -34,12 +34,20 @@ def main():
 
 # Tăng tốc tải bằng việc lưu dữ liệu vào cache
 @st.cache_resource
-# Hàm download data
-def download_data(op, start_date, end_date):
-    df = yf.download(op, start=start_date, end=end_date, progress=False)
-    return df
+def load_data(file_path):
+    try:
+        df = pd.read_csv(file_path)
+        return df
+    except FileNotFoundError:
+        st.sidebar.error(f"Error: File '{file_path}' not found.")
+        return None
 
-# Danh sách mã cổ phiếu
+# Thay đổi hàm download_data để sử dụng tệp CSV từ thư mục "dataset"
+def download_data(option, start_date, end_date):
+    file_path = os.path.join("dataset", f"{option}.csv")
+    return load_data(file_path)
+
+# Danh sách các mã cổ phiếu tương ứng với các tệp trong thư mục "dataset"
 stock_options = ['TSLA', 'BMW.DE', 'TM', 'VOW3.DE', 'FORD']
 
 # Lựa chọn mã cổ phiếu thông qua select box
@@ -47,6 +55,12 @@ option = st.sidebar.selectbox('Select a Stock Symbol', stock_options)
 
 # Chuyển đổi mã cổ phiếu thành chữ hoa để đảm bảo tính nhất quán
 option = option.upper()
+
+# Thêm phần kiểm tra xem tệp CSV tồn tại hay không
+if os.path.exists(os.path.join("dataset", f"{option}.csv")):
+    st.sidebar.success(f"File '{option}.csv' found.")
+else:
+    st.sidebar.warning(f"Warning: File '{option}.csv' not found in the 'dataset' folder.")
 
 today = datetime.date.today()
 duration = st.sidebar.number_input('Enter the duration', value=1824)
@@ -58,8 +72,8 @@ if st.sidebar.button('Send'):
     if start_date < end_date:
         st.sidebar.success('Start date: `%s`\n\nEnd date: `%s`' % (start_date, end_date))
         data = download_data(option, start_date, end_date)
-        # Bây giờ bạn có thể sử dụng biến "data" để làm những việc khác
-        st.write(data.head())  # In ra vài dòng đầu của dữ liệu
+        if data is not None:
+            st.write(data.head())  # In ra vài dòng đầu của dữ liệu
     else:
         st.sidebar.error('Error: End date must fall after start date')
 
