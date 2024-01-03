@@ -11,13 +11,13 @@ Dự án này tập trung vào việc phát triển một hệ thống dự đo�
 1. Clone dự án về máy local của bạn:
 
     ```bash
-    git clone https://github.com/your-username/prediction-stock-with-python.git
+    git clone https://github.com/davisduccopny/Stock-Prediction-with-Python-project.git
     ```
 
 2. Di chuyển vào thư mục dự án:
 
     ```bash
-    cd prediction-stock-with-python
+    cd Stock-Prediction-with-Python-project
     ```
 
 3. Tạo môi trường ảo (nếu cần):
@@ -48,7 +48,7 @@ Dự án này tập trung vào việc phát triển một hệ thống dự đo�
 
 ## Cách Sử Dụng
 
-1. Chạy notebook `stock_prediction.ipynb` để xem quy trình dự đoán chi tiết.
+1. Chạy notebook `main_train.ipynb` để xem quy trình dự đoán chi tiết.
 
 2. Tùy chỉnh các tham số và mô hình theo nhu cầu của bạn.
 
@@ -56,9 +56,9 @@ Dự án này tập trung vào việc phát triển một hệ thống dự đo�
 
 ## Cấu Trúc Thư Mục
 
-- `data/`: Chứa dữ liệu lịch sử về giá cổ phiếu.
-- `notebooks/`: Chứa các notebook Jupyter cho phân tích và dự đoán.
-- `src/`: Chứa mã nguồn cho các phần quan trọng của dự án.
+- `dataset/`: Chứa dữ liệu lịch sử về giá cổ phiếu.
+- `train_folder/`: Chứa các notebook Jupyter cho phân tích và dự đoán.
+- `asset/image/`: Lưu trữ ảnh của dự án
 - `results/`: Nơi lưu trữ các kết quả dự đoán và biểu đồ.
 
 ## Đóng Góp
