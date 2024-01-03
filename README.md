@@ -39,7 +39,10 @@ Dự án này tập trung vào việc phát triển một hệ thống dự đo�
         ```bash
         source venv/bin/activate
         ```
-
+    - Trên môi trường streamlit:
+        ```bash
+        pip freeze > requirements.txt
+        ```
 5. Cài đặt các thư viện cần thiết:
 
     ```bash
