@@ -1,6 +1,6 @@
 # Prediction Stock With Python Project
 
-![Project Image](https://enlight.nyc/img/stock.png)
+![Project Image](./asset/image/logo-tesla.jpg)
 
 ## Mục Đích Dự Án
 
