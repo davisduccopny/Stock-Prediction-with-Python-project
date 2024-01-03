@@ -315,7 +315,7 @@ def dataframe():
     st.header('Recent Data')
     st.dataframe(data.tail(10))
 
- 
+ @st.cache_resource
 def statistical_des():
     st.header("Thống kê mô tả") 
     st.subheader("Các chỉ số cơ bản")
