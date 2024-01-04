@@ -2,6 +2,7 @@ import yfinance as yt
 import streamlit as st
 import pandas as pd
 import yfinance as yf
+import base64
 from ta.volatility import BollingerBands
 
 import datetime
