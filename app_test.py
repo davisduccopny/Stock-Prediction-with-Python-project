@@ -506,7 +506,7 @@ def introduction_stock():
             <img src='https://inhoangha.com/ckfinder/userfiles/images/logo-tesla-review.jpg' alt='Ten_Hinh_Anh' width='100%' style='border-radius:60%; margin-bottom:5%;'>
         </div>
         """, unsafe_allow_html=True)
-        display_file_content("../info_stock/tsla.txt")
+        display_file_content("./info_stock/tsla.txt")
         
     elif option_stock_name == '7203.T':
         st.markdown("""
@@ -514,28 +514,28 @@ def introduction_stock():
             <img src='https://global.toyota/pages/global_toyota/mobility/toyota-brand/emblem_ogp_001.png' alt='Ten_Hinh_Anh' width='100%' style='border-radius:60%;margin-bottom:5%;'>
         </div>
         """, unsafe_allow_html=True)
-        display_file_content("../info_stock/toyota.txt")
+        display_file_content("./info_stock/toyota.txt")
     elif option_stock_name == 'BMW.DE':
         st.markdown("""
         <div style="display: flex; justify-content: center;">
             <img src='https://vudigital.co/wp-content/uploads/2021/10/logo-bmw-lich-su-hinh-thanh-va-phat-trien-tu-1916-voi-su-nham-lan-thu-vi-9.jpg' alt='Ten_Hinh_Anh' width='100%' style='border-radius:60%;margin-bottom:5%;'>
         </div>
         """, unsafe_allow_html=True)
-        display_file_content("../info_stock/bmw.txt")
+        display_file_content("./info_stock/bmw.txt")
     elif option_stock_name == 'VOW3.DE':
         st.markdown("""
         <div style="display: flex; justify-content: center;">
             <img src='https://logowik.com/content/uploads/images/345_volkswagen_logo.jpg' alt='Ten_Hinh_Anh' width='100%' style='border-radius:60%;margin-bottom:5%;'>
         </div>
         """, unsafe_allow_html=True)
-        display_file_content("../info_stock/wow3.txt")
+        display_file_content("./info_stock/wow3.txt")
     else:
         st.markdown("""
         <div style="display: flex; justify-content: center;">
             <img src='https://inkythuatso.com/uploads/images/2021/11/logo-ford-inkythuatso-01-15-10-52-49.jpg' alt='Ten_Hinh_Anh' width='100%' style='border-radius:60%;margin-bottom:5%;'>
         </div>
         """, unsafe_allow_html=True)
-        display_file_content("../info_stock/ford.txt")
+        display_file_content("./info_stock/ford.txt")
 def dataframe():
     st.header('Recent Data')
     st.dataframe(data.tail(10))
