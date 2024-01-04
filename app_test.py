@@ -1,10 +1,8 @@
-import yfinance as yt 
 import streamlit as st
 import pandas as pd
 import yfinance as yf
-import base64
 from ta.volatility import BollingerBands
-
+import base64
 import datetime
 import os
 from PIL import Image
@@ -361,7 +359,6 @@ class TRAIN_MODELS:
         st.write("Mean Squared Error:", mse_sesop)
         st.write("R-squared:", r2_sesop)
 # Thêm mã HTML để căn giữa tiêu đề
-
 st.markdown("<h1 style='text-align: center;'>Stock Price Predictions</h1>", unsafe_allow_html=True)
 st.sidebar.markdown("""
     <h1 style='position: fixed; top: 2%; left: 7%;font-size:35px'>TEAM 1</h1>
@@ -457,6 +454,24 @@ def display_file_content(file_path):
                 st.error(f"Tệp tin '{full_file_path}' không thể đọc với encoding utf-8.")
     else:
         st.error(f"Tệp tin '{full_file_path}' không tồn tại.")
+def embed_image(file_path):
+    # Lấy đường dẫn thư mục hiện tại
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    # Kết hợp đường dẫn tới tệp ảnh
+    full_file_path = os.path.join(current_dir, file_path)
+    
+    # Đọc nội dung hình ảnh và chuyển thành chuỗi base64
+    with open(full_file_path, "rb") as image_file:
+        encoded_image = base64.b64encode(image_file.read()).decode("utf-8")
+
+    # Nhúng vào mã HTML và hiển thị trên Streamlit
+    html_code = f"""
+    <div style="display: flex; justify-content: center;">
+        <img src='data:image/jpeg;base64,{encoded_image}' alt='Ten_Hinh_Anh' width='100%' style='border-radius:60%; margin-bottom:5%;'>
+    </div>
+    """
+    st.markdown(html_code, unsafe_allow_html=True)
             
 def introduction_stock():
     if option_stock_name=='TSLA':
@@ -503,48 +518,20 @@ def introduction_stock():
         st.line_chart(bb)
 
     if option_stock_name=='TSLA':
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        file_path = './asset/image/logo-tesla.jpg'
-        full_file_path = os.path.join(current_dir, file_path)
-        with open(full_file_path, "rb") as image_file:
-            encoded_image = base64.b64encode(image_file.read()).decode("utf-8")
-
-        # Nhúng vào mã HTML
-        html_code = f"""
-        <div style="display: flex; justify-content: center;">
-            <img src='data:image/jpeg;base64,{encoded_image}' alt='Ten_Hinh_Anh' width='100%' style='border-radius:60%; margin-bottom:5%;'>
-        </div>
-        """
-        st.markdown(html_code, unsafe_allow_html=True)
+        embed_image('./asset/image/logo-tesla.jpg')
         display_file_content("./info_stock/tsla.txt")
         
     elif option_stock_name == '7203.T':
-        st.markdown("""
-        <div style="display: flex; justify-content: center;">
-            <img src='https://global.toyota/pages/global_toyota/mobility/toyota-brand/emblem_ogp_001.png' alt='Ten_Hinh_Anh' width='100%' style='border-radius:60%;margin-bottom:5%;'>
-        </div>
-        """, unsafe_allow_html=True)
+        embed_image('./asset/image/logo-toyota.png')
         display_file_content("./info_stock/toyota.txt")
     elif option_stock_name == 'BMW.DE':
-        st.markdown("""
-        <div style="display: flex; justify-content: center;">
-            <img src='https://vudigital.co/wp-content/uploads/2021/10/logo-bmw-lich-su-hinh-thanh-va-phat-trien-tu-1916-voi-su-nham-lan-thu-vi-9.jpg' alt='Ten_Hinh_Anh' width='100%' style='border-radius:60%;margin-bottom:5%;'>
-        </div>
-        """, unsafe_allow_html=True)
+        embed_image('./asset/image/logo-bmw.jpg')
         display_file_content("./info_stock/bmw.txt")
     elif option_stock_name == 'VOW3.DE':
-        st.markdown("""
-        <div style="display: flex; justify-content: center;">
-            <img src='https://logowik.com/content/uploads/images/345_volkswagen_logo.jpg' alt='Ten_Hinh_Anh' width='100%' style='border-radius:60%;margin-bottom:5%;'>
-        </div>
-        """, unsafe_allow_html=True)
+        embed_image('./asset/image/logo-wow.jpg')
         display_file_content("./info_stock/wow3.txt")
     else:
-        st.markdown("""
-        <div style="display: flex; justify-content: center;">
-            <img src='https://inkythuatso.com/uploads/images/2021/11/logo-ford-inkythuatso-01-15-10-52-49.jpg' alt='Ten_Hinh_Anh' width='100%' style='border-radius:60%;margin-bottom:5%;'>
-        </div>
-        """, unsafe_allow_html=True)
+        embed_image('./asset/image/logo-ford.jpg')
         display_file_content("./info_stock/ford.txt")
 def dataframe():
     st.header('Recent Data')
