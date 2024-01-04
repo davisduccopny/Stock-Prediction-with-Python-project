@@ -503,11 +503,19 @@ def introduction_stock():
         st.line_chart(bb)
 
     if option_stock_name=='TSLA':
-        st.markdown("""
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        file_path = '../asset/image/logo-tesla.jpg'
+        full_file_path = os.path.join(current_dir, file_path)
+        with open(full_file_path, "rb") as image_file:
+            encoded_image = base64.b64encode(image_file.read()).decode("utf-8")
+
+        # Nhúng vào mã HTML
+        html_code = f"""
         <div style="display: flex; justify-content: center;">
-            <img src='https://inhoangha.com/ckfinder/userfiles/images/logo-tesla-review.jpg' alt='Ten_Hinh_Anh' width='100%' style='border-radius:60%; margin-bottom:5%;'>
+            <img src='data:image/jpeg;base64,{encoded_image}' alt='Ten_Hinh_Anh' width='100%' style='border-radius:60%; margin-bottom:5%;'>
         </div>
-        """, unsafe_allow_html=True)
+        """
+        st.markdown(html_code, unsafe_allow_html=True)
         display_file_content("./info_stock/tsla.txt")
         
     elif option_stock_name == '7203.T':
