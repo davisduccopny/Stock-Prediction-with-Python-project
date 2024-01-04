@@ -504,7 +504,7 @@ def introduction_stock():
 
     if option_stock_name=='TSLA':
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        file_path = '../asset/image/logo-tesla.jpg'
+        file_path = './asset/image/logo-tesla.jpg'
         full_file_path = os.path.join(current_dir, file_path)
         with open(full_file_path, "rb") as image_file:
             encoded_image = base64.b64encode(image_file.read()).decode("utf-8")
