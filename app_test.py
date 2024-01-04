@@ -370,7 +370,7 @@ st.sidebar.markdown("""
         </div>
         """, unsafe_allow_html=True)
 st.sidebar.info('Welcome to the Stock Price Prediction App. Choose your options below')
-st.sidebar.info("Created and designed by [Team Data Science - QuocChienDuc](www.linkedin.com/in/quốc-hoàng-xuân-0a3448293)")
+st.sidebar.info("Created and designed by [Team Data Science - QuocChienDuc](https://github.com/davisduccopny/Stock-Prediction-with-Python-project/)")
 
 def main():
     st.sidebar.title('Lựa chọn')
