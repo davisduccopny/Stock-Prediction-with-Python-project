@@ -29,7 +29,7 @@ from statsmodels.tsa.holtwinters import ExponentialSmoothing
 from statsmodels.graphics.tsaplots import plot_acf
 from statsmodels.tsa.stattools import acf
 
-st.set_page_config(layout='wide', initial_sidebar_state='expanded')
+st.set_page_config(layout='wide',page_title="Stock Prediction", initial_sidebar_state='expanded')
 # Class thống kê mô tả
 class DESCRIPTIVE_STATISTICS:
     def __init__(self, df):
@@ -226,21 +226,13 @@ class TRAIN_MODELS:
 
         return fig
     def plot_dynamic_moving_average_acuracy(self, window_size=1):
-        # Tính cột predict cho window_size cụ thể
         prediction_column = self.dynamic_moving_average(window_size=window_size)
-
-        # Tạo đồ thị Plotly
         fig = go.Figure()
-
-        # Vẽ đường cho Actual Close Price
         fig.add_trace(go.Scatter(x=self.closedf.index, y=self.closedf['close'],
                                 mode='lines', name='Actual Close Price'))
-
-        # Vẽ đường cho Dynamic Moving Average
         fig.add_trace(go.Scatter(x=prediction_column.index, y=prediction_column,
                                 mode='lines', line=dict(color='red'),
                                 name=f'Moving Average (Window = {window_size})'))
-
         fig.update_layout(
             title=f'Dynamic Moving Average Model (Window = {window_size})',
             xaxis_title='Date',
@@ -289,7 +281,6 @@ class TRAIN_MODELS:
             progress = (i + 1) / total_trials
             self.progress_bar.progress(progress)
             study.optimize(objective, n_trials=1)
-        # study.optimize(objective, n_trials=n_trials)
         self.best_alpha_optuna = study.best_params['alpha']
         self.mae = study.best_value
         return self.best_alpha_optuna, self.mae
@@ -531,11 +522,103 @@ class TIME_SERIES:
     def __init__(self,df):
         self.df = df
         self.closedf = self.df[['close','date']].copy()
+        self.closedfcopy = self.df[['date', 'close']].copy()
+    def decompose_and_plot(self, start_date='2023-01-01'):
+        closedfcopy = self.df[['date', 'close']].copy()
+        closedfcopy = closedfcopy.set_index('date')
+        closedfcopy =closedfcopy[closedfcopy.index > start_date]
+        result = seasonal_decompose(closedfcopy['close'], model='multiplicative', period=1)
+
+        fig_trend = go.Figure()
+        fig_seasonal = go.Figure()
+        fig_residual = go.Figure()
+
+        fig_trend.add_trace(go.Scatter(x=result.trend.index, y=result.trend.values,
+                                       mode='lines', name='Trend Factor'))
+        fig_trend.update_layout(xaxis_title='Date', yaxis_title='Trend Factor',width=13*80)
+
+        fig_seasonal.add_trace(go.Scatter(x=result.seasonal.index, y=result.seasonal.values,
+                                          mode='lines', name='Seasonal Factor'))
+        fig_seasonal.update_layout( xaxis_title='Date', yaxis_title='Seasonal Factor',width=13*80)
+
+        fig_residual.add_trace(go.Scatter(x=result.resid.index, y=result.resid.values,
+                                          mode='lines', name='Residual Factor'))
+        fig_residual.update_layout( xaxis_title='Date', yaxis_title='Residual Factor',width=13*80)
+
+        return fig_trend, fig_seasonal, fig_residual
     
-    # def plot_seasonal_analysis(self,forecast_values):
-        
+    def plot_close_price_by_year(self):
+        fig = px.line(self.df, x=self.df['date'], y=self.df['close'],
+                      color=self.df['date'].dt.year,
+                      labels={'close': 'Price', 'date': 'Date'},
+                      title='Close Price by Year')
+        fig.update_layout(xaxis_title='Date', yaxis_title='Price', legend_title='Year',width=13*80,title_x=0.5)
+
+        return fig
+    def plot_seasonal_decomposition_byyear(self):
+        closedfcopy = self.df[['date', 'close']].copy()
+        closedfcopy = closedfcopy.set_index('date')
+        result = seasonal_decompose(closedfcopy['close'], model='multiplicative', period=1)
+        fig_seasonal = go.Figure()
+        fig_trend = go.Figure()
+        fig_residual = go.Figure()
+        fig_original = go.Figure()
+
+        fig_original.add_trace(go.Scatter(x=closedfcopy.index, y=closedfcopy['close'],
+                                          mode='lines', name='Original'))
+        fig_original.update_layout(
+                                   xaxis_title='Date', yaxis_title='Original',width=13*80)
+
+        fig_trend.add_trace(go.Scatter(x=result.trend.index, y=result.trend.values,
+                                       mode='lines', name='Trend'))
+        fig_trend.update_layout(
+                                xaxis_title='Date', yaxis_title='Trend',width=13*80)
+
+        fig_seasonal.add_trace(go.Scatter(x=result.seasonal.index, y=result.seasonal.values,
+                                          mode='lines', name='Seasonality'))
+        fig_seasonal.update_layout(
+                                   xaxis_title='Date', yaxis_title='Seasonality',width=13*80)
+
+        fig_residual.add_trace(go.Scatter(x=result.resid.index, y=result.resid.values,
+                                          mode='lines', name='Residuals'))
+        fig_residual.update_layout(
+                                   xaxis_title='Date', yaxis_title='Residuals',width=13*80)
+
+        return fig_original, fig_trend, fig_seasonal, fig_residual
+    def plot_seasonal_decomposition_and_acf(self, period=65):
+        closedfcopy = self.df[['date', 'close']].copy()
+        closedfcopy = closedfcopy.set_index('date')
+        result = seasonal_decompose(closedfcopy['close'], model='additive', period=period)
+        acf_values, conf_int = acf(closedfcopy['close'], nlags=period, alpha=0.05)
+        fig_seasonal = go.Figure()
+        fig_trend = go.Figure()
+        fig_residual = go.Figure()
+        fig_acf = go.Figure()
+        fig_seasonal.add_trace(go.Scatter(x=result.seasonal.index, y=result.seasonal.values,
+                                          mode='lines', name='Seasonality'))
+        fig_seasonal.update_layout(
+                                   xaxis_title='Date', yaxis_title='Seasonality',width=13*80)
+        fig_trend.add_trace(go.Scatter(x=result.trend.index, y=result.trend.values,
+                                       mode='lines', name='Trend'))
+        fig_trend.update_layout(
+                                xaxis_title='Date', yaxis_title='Trend',width=13*80)
+        fig_residual.add_trace(go.Scatter(x=result.resid.index, y=result.resid.values,
+                                          mode='lines', name='Residuals'))
+        fig_residual.update_layout(
+                                   xaxis_title='Date', yaxis_title='Residuals',width=13*80)
+        fig_acf.add_trace(go.Bar(x=list(range(len(acf_values))), y=acf_values,
+                                 name='Autocorrelation'))
+        fig_acf.add_shape(dict(type='line', x0=0, x1=period, y0=1, y1=1,
+                               line=dict(color='red', width=2)))
+        fig_acf.add_shape(dict(type='line', x0=0, x1=period, y0=-1, y1=-1,
+                               line=dict(color='red', width=2)))
+        fig_acf.update_layout(title='Autocorrelation Function',
+                              xaxis_title='Lag', yaxis_title='Autocorrelation',width=13*80,title_x=0.4)
+
+        return fig_seasonal, fig_trend, fig_residual, fig_acf
 
 # Thêm mã HTML để căn giữa tiêu đề
+
 st.markdown("<h1 style='text-align: center;'>Stock Price Predictions</h1>",
             unsafe_allow_html=True)
 st.sidebar.markdown("""
@@ -547,13 +630,13 @@ st.sidebar.markdown("""
         </div>
         """, unsafe_allow_html=True)    
 st.sidebar.info(
-    'Welcome to the Stock Price Prediction App. Choose your options below')
+    '❤️Chào mừng đến với dự án❤️')
 st.sidebar.info(
     "Created and designed by [Team Data Science - QuocChienDuc](https://github.com/davisduccopny/Stock-Prediction-with-Python-project/)")
-
-
+# Khai báo các hàm bổ sung và hàm main
+    ## Define hàm main
 def main():
-    st.sidebar.title('Lựa chọn')
+    st.sidebar.subheader('Lựa chọn tác vụ')
     option = st.sidebar.radio('Chọn một tab:', [
                               'Trực quan', 'Thống kê mô tả', 'Phân tách Times Series', 'Prediction'])
 
@@ -562,30 +645,66 @@ def main():
     elif option == 'Thống kê mô tả':
         statistical_des()
     elif option == 'Phân tách Times Series':
-        dataframe()
+        TimeSeries()
     else:
         predict()
+    ## Hàm cleaning data
+def clean_dataframe(dataframe):
+    dataframe = dataframe.rename(columns={'Date': 'date', 'Open': 'open', 'Hight': 'hight',
+                                 'Low': 'low', 'Close': 'close', 'Adj Close': 'adj_close', 'Volume': 'volume'})
+    dataframe['date'] = pd.to_datetime(dataframe.index, errors='coerce')
+    dataframe = dataframe.dropna()
+    dataframe = dataframe.drop_duplicates()
+    dataframe = dataframe.reset_index(drop=True)
+    return dataframe
+    ## Define hàm đọc file
+def display_file_content(file_path):
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    full_file_path = os.path.join(current_dir, file_path)
 
-
-# Tăng tốc tải bằng việc lưu dữ liệu vào cache
+    if os.path.exists(full_file_path):
+        with open(full_file_path, "r", encoding="utf-8") as file:
+            try:
+                lines = file.readlines()
+                content = "\n".join(lines).strip()
+                st.info(f"### Giới thiệu\n{content}")
+            except UnicodeDecodeError:
+                st.error(
+                    f"Tệp tin '{full_file_path}' không thể đọc với encoding utf-8.")
+    else:
+        st.error(f"Tệp tin '{full_file_path}' không tồn tại.")
+    ## Define hàm load ảnh :
+def embed_image(file_path):
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    full_file_path = os.path.join(current_dir, file_path)
+    with open(full_file_path, "rb") as image_file:
+        encoded_image = base64.b64encode(image_file.read()).decode("utf-8")
+    html_code = f"""
+    <div style="display: flex; justify-content: center;">
+        <img src='data:image/jpeg;base64,{encoded_image}' alt='Ten_Hinh_Anh' width='100%' style='border-radius:60%; margin-bottom:5%;'>
+    </div>
+    """
+    st.markdown(html_code, unsafe_allow_html=True)
+# Bắt đầu load dữ liệu và chạy trang 
+    ## Tăng tốc tải bằng việc lưu dữ liệu vào cache
 @st.cache_resource
-# Hàm download data
+    ## Hàm download data
 def download_data(op, start_date, end_date):
     df = yf.download(op, start=start_date, end=end_date, progress=False)
     return df
 
 
-# Danh sách mã cổ phiếu
+    ## Danh sách mã cổ phiếu
 stock_options = ['TSLA', 'BMW.DE', '7203.T', 'VOW3.DE', 'F']
 
-# Lựa chọn mã cổ phiếu thông qua select box
-option_stock_name = st.sidebar.selectbox(
-    'Select a Stock Symbol', stock_options)
+    ## Lựa chọn mã cổ phiếu thông qua select box
+st.sidebar.subheader('Mã cổ phiếu và thời gian')
+option_stock_name = st.sidebar.selectbox('Chọn mã cổ phiếu',stock_options)
 
-# Chuyển đổi mã cổ phiếu thành chữ hoa để đảm bảo tính nhất quán
+    ## Chuyển đổi mã cổ phiếu thành chữ hoa để đảm bảo tính nhất quán
 option_stock_name = option_stock_name.upper()
 today = datetime.date.today()
-# Nhập dữ liệu:
+    ## Nhập dữ liệu:
 with st.sidebar.container():
     expander = st.expander("Times Select")
     with expander:
@@ -595,77 +714,21 @@ with st.sidebar.container():
         end_date = st.date_input('End date', today)
         duration_2 = (end_date - start_date).days
         st.info(f"Final duration: {duration_2} days")
-
+    ## Kiểm tra dữ liệu nếu cần
 if st.sidebar.button('Send'):
     if start_date < end_date:
         st.sidebar.success('Start date: `%s`\n\nEnd date: `%s`' %
                            (start_date, end_date))
         data = download_data(option_stock_name, start_date, end_date)
-        # Bây giờ bạn có thể sử dụng biến "data" để làm những việc khác
-        st.write(data.head())  # In ra vài dòng đầu của dữ liệu
+        st.write(data.head())  
     else:
         st.sidebar.error('Error: End date must fall after start date')
 
-
+# Load dữ liệu
 data = download_data(option_stock_name, start_date, end_date)
-scaler = StandardScaler()
-# Hàm cleaning data
-
-
-def clean_dataframe(dataframe):
-    dataframe = dataframe.rename(columns={'Date': 'date', 'Open': 'open', 'Hight': 'hight',
-                                 'Low': 'low', 'Close': 'close', 'Adj Close': 'adj_close', 'Volume': 'volume'})
-    dataframe['date'] = pd.to_datetime(dataframe.index, errors='coerce')
-    dataframe = dataframe.dropna()
-    dataframe = dataframe.drop_duplicates()
-    dataframe = dataframe.reset_index(drop=True)
-    return dataframe
-
-
 # Cleaning data
 data = clean_dataframe(data)
-
-
-def display_file_content(file_path):
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-
-    # Kết hợp đường dẫn tuyệt đối với đường dẫn tương đối của tệp tin
-    full_file_path = os.path.join(current_dir, file_path)
-
-    if os.path.exists(full_file_path):
-        with open(full_file_path, "r", encoding="utf-8") as file:
-            try:
-                # Đọc từng dòng và thêm ký tự xuống dòng
-                lines = file.readlines()
-                content = "\n".join(lines).strip()
-                st.info(f"### Giới thiệu\n{content}")
-            except UnicodeDecodeError:
-                st.error(
-                    f"Tệp tin '{full_file_path}' không thể đọc với encoding utf-8.")
-    else:
-        st.error(f"Tệp tin '{full_file_path}' không tồn tại.")
-
-
-def embed_image(file_path):
-    # Lấy đường dẫn thư mục hiện tại
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-
-    # Kết hợp đường dẫn tới tệp ảnh
-    full_file_path = os.path.join(current_dir, file_path)
-
-    # Đọc nội dung hình ảnh và chuyển thành chuỗi base64
-    with open(full_file_path, "rb") as image_file:
-        encoded_image = base64.b64encode(image_file.read()).decode("utf-8")
-
-    # Nhúng vào mã HTML và hiển thị trên Streamlit
-    html_code = f"""
-    <div style="display: flex; justify-content: center;">
-        <img src='data:image/jpeg;base64,{encoded_image}' alt='Ten_Hinh_Anh' width='100%' style='border-radius:60%; margin-bottom:5%;'>
-    </div>
-    """
-    st.markdown(html_code, unsafe_allow_html=True)
-
-
+    # Chạy hàm trang giới thiệu
 def introduction_stock():
     if option_stock_name == 'TSLA':
         st.header("Tesla, Inc. (TSLA)")
@@ -712,32 +775,26 @@ def introduction_stock():
         st.line_chart(bb)
 
     if option_stock_name == 'TSLA':
-        embed_image('./asset/image/logo-tesla.jpg')
-        display_file_content("./info_stock/tsla.txt")
+        embed_image('../asset/image/logo-tesla.jpg')
+        display_file_content("../info_stock/tsla.txt")
 
     elif option_stock_name == '7203.T':
-        embed_image('./asset/image/logo-toyota.png')
-        display_file_content("./info_stock/toyota.txt")
+        embed_image('../asset/image/logo-toyota.png')
+        display_file_content("../info_stock/toyota.txt")
     elif option_stock_name == 'BMW.DE':
-        embed_image('./asset/image/logo-bmw.jpg')
-        display_file_content("./info_stock/bmw.txt")
+        embed_image('../asset/image/logo-bmw.jpg')
+        display_file_content("../info_stock/bmw.txt")
     elif option_stock_name == 'VOW3.DE':
-        embed_image('./asset/image/logo-wow.jpg')
-        display_file_content("./info_stock/wow3.txt")
+        embed_image('../asset/image/logo-wow.jpg')
+        display_file_content("../info_stock/wow3.txt")
     else:
-        embed_image('./asset/image/logo-ford.jpg')
-        display_file_content("./info_stock/ford.txt")
-
-
-def dataframe():
-    st.header('Recent Data')
-    st.dataframe(data.tail(10))
-
-
+        embed_image('../asset/image/logo-ford.jpg')
+        display_file_content("../info_stock/ford.txt")
+    # Chạy hàm trang thống kê mô tả
 def statistical_des():
     st.header("Thống kê mô tả")
     st.subheader("Các chỉ số cơ bản")
-    st.dataframe(data.describe())
+    st.dataframe(data.describe(),width=13*80)
     stock_statistic_dv = DESCRIPTIVE_STATISTICS(data)
     st.subheader("Kiểm tra sự khác biệt các biến")
     with st.expander("Trung bình giá giao dịch theo tháng"):
@@ -763,8 +820,31 @@ def statistical_des():
         st.plotly_chart(stock_statistic_dv.plot_close_price_comparision())
     with st.expander("Tỷ suất lợi nhuận"):
         st.plotly_chart(stock_statistic_dv.plot_profit_margin_comparison())
-
-
+    # Chạy hàm chuỗi thời gian
+def TimeSeries():
+    st.header('Phân tích các yếu tố chuỗi thời gian')
+    st.dataframe(data.tail(10),width=13*80)
+    time_analyzer = TIME_SERIES(data)
+    tab_time1,tab_time2,tab_time3 = st.tabs(["📈 Trung hạn", "📈 Dài hạn", "🗃 Data"])
+    with tab_time1:
+        fig_trend, fig_seasonal, fig_residual = time_analyzer.decompose_and_plot()
+        st.plotly_chart(fig_trend)
+        st.plotly_chart(fig_seasonal)
+        st.plotly_chart(fig_residual)
+    with tab_time2:
+        st.plotly_chart(time_analyzer.plot_close_price_by_year())
+        fig_original_long, fig_trend_long, fig_seasonal_long, fig_residual_long = time_analyzer.plot_seasonal_decomposition_byyear()
+        st.plotly_chart(fig_original_long)
+        st.plotly_chart(fig_trend_long)
+        st.plotly_chart(fig_seasonal_long)
+        st.plotly_chart(fig_residual_long)
+    with tab_time3:
+        fig_seasonal_qt, fig_trend_qt, fig_residual_qt, fig_acf_qt = time_analyzer.plot_seasonal_decomposition_and_acf()
+        st.plotly_chart(fig_seasonal_qt)
+        st.plotly_chart(fig_trend_qt)
+        st.plotly_chart(fig_residual_qt)
+        st.plotly_chart(fig_acf_qt)
+    # Chạy hàm mô hình    
 def predict():
     st.header("Dự báo giá cổ phiếu (Stock Price Prediction)")
     col_predict_1, col_predict_2 = st.columns(2)
@@ -866,6 +946,6 @@ def predict():
                     st.text(f'Day {day}: {i}')
                     day += 1
 
-
+# Thực thi hàm main
 if __name__ == '__main__':
     main()
