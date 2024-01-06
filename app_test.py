@@ -625,14 +625,15 @@ st.sidebar.markdown("""
     <h1 style='font-size:35px;text-align:center'>TEAM 1</h1>
 """, unsafe_allow_html=True)    
 st.sidebar.markdown("""
-        <div style="display: flex; justify-content: center;">
+        <div style="display: flex; justify-content: center;margin-bottom:0">
             <img src='https://scontent.fsgn5-9.fna.fbcdn.net/v/t39.30808-6/242489593_405101811147345_1733417058228090429_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=173fa1&_nc_ohc=bhYKiwdAEyAAX_l1-bz&_nc_ht=scontent.fsgn5-9.fna&oh=00_AfDuU3ENr2x7o-ugDanKzy0A7Xuz2cKIdHbuQTyQjAKRGg&oe=65983BAE' alt='Ten_Hinh_Anh' width='60%' style='border-radius:50%;margin-bottom:12%;'>
         </div>
         """, unsafe_allow_html=True)    
 st.sidebar.info(
     '❤️Chào mừng đến với dự án❤️')
-st.sidebar.info(
-    "Created and designed by [Team Data Science - QuocChienDuc](https://github.com/davisduccopny/Stock-Prediction-with-Python-project/)")
+st.sidebar.markdown(  """
+    ---
+    """)
 # Khai báo các hàm bổ sung và hàm main
     ## Define hàm main
 def main():
@@ -949,3 +950,8 @@ def predict():
 # Thực thi hàm main
 if __name__ == '__main__':
     main()
+st.sidebar.markdown(  """
+    ---
+    """)
+st.sidebar.info(
+    "Created and designed by [Team Data Science - QuocChienDuc](https://github.com/davisduccopny/Stock-Prediction-with-Python-project/)")
