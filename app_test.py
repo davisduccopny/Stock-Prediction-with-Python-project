@@ -825,7 +825,7 @@ def TimeSeries():
     st.header('Phân tích các yếu tố chuỗi thời gian')
     st.dataframe(data.tail(10),width=13*80)
     time_analyzer = TIME_SERIES(data)
-    tab_time1,tab_time2,tab_time3 = st.tabs(["📈 Trung hạn", "📈 Dài hạn", "🗃 Data"])
+    tab_time1,tab_time2,tab_time3 = st.tabs(["📈 Trung hạn", "📈 Dài hạn", "📈 Theo quý"])
     with tab_time1:
         fig_trend, fig_seasonal, fig_residual = time_analyzer.decompose_and_plot()
         st.plotly_chart(fig_trend)
