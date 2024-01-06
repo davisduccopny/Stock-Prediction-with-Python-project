@@ -775,21 +775,21 @@ def introduction_stock():
         st.line_chart(bb)
 
     if option_stock_name == 'TSLA':
-        embed_image('../asset/image/logo-tesla.jpg')
-        display_file_content("../info_stock/tsla.txt")
+        embed_image('./asset/image/logo-tesla.jpg')
+        display_file_content("./info_stock/tsla.txt")
 
     elif option_stock_name == '7203.T':
-        embed_image('../asset/image/logo-toyota.png')
-        display_file_content("../info_stock/toyota.txt")
+        embed_image('./asset/image/logo-toyota.png')
+        display_file_content("./info_stock/toyota.txt")
     elif option_stock_name == 'BMW.DE':
-        embed_image('../asset/image/logo-bmw.jpg')
-        display_file_content("../info_stock/bmw.txt")
+        embed_image('./asset/image/logo-bmw.jpg')
+        display_file_content("./info_stock/bmw.txt")
     elif option_stock_name == 'VOW3.DE':
-        embed_image('../asset/image/logo-wow.jpg')
-        display_file_content("../info_stock/wow3.txt")
+        embed_image('./asset/image/logo-wow.jpg')
+        display_file_content("./info_stock/wow3.txt")
     else:
-        embed_image('../asset/image/logo-ford.jpg')
-        display_file_content("../info_stock/ford.txt")
+        embed_image('./asset/image/logo-ford.jpg')
+        display_file_content("./info_stock/ford.txt")
     # Chạy hàm trang thống kê mô tả
 def statistical_des():
     st.header("Thống kê mô tả")
