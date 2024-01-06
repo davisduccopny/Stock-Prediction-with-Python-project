@@ -1,6 +1,6 @@
 # Prediction Stock With Python Project
 
-![Project Image](./asset/image/logo-tesla.jpg)
+![Project Image](./asset/image/homepage.png)
 
 ## Mục Đích Dự Án
 
@@ -62,7 +62,7 @@ Dự án này tập trung vào việc phát triển một hệ thống dự đo�
 - `dataset/`: Chứa dữ liệu lịch sử về giá cổ phiếu.
 - `train_folder/`: Chứa các notebook Jupyter cho phân tích và dự đoán.
 - `asset/image/`: Lưu trữ ảnh của dự án
-- `results/`: Nơi lưu trữ các kết quả dự đoán và biểu đồ.
+- `info_stock/`: Lưu trữ thông tin cổ phiếu.
 
 ## Đóng Góp
 
