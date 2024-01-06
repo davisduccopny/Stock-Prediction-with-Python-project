@@ -8,12 +8,9 @@ import os
 from PIL import Image
 from datetime import date
 from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
-from sklearn.neighbors import KNeighborsRegressor
-from xgboost import XGBRegressor
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.ensemble import ExtraTreesRegressor
+import plotly.express as px
+import plotly.graph_objects as go
+import plotly.figure_factory as ff
 
 import os
 import numpy as np
@@ -32,124 +29,161 @@ from statsmodels.tsa.holtwinters import ExponentialSmoothing
 from statsmodels.graphics.tsaplots import plot_acf
 from statsmodels.tsa.stattools import acf
 
-# Class Thống kê mô tả :
+st.set_page_config(layout='wide', initial_sidebar_state='expanded')
+# Class thống kê mô tả
 class DESCRIPTIVE_STATISTICS:
     def __init__(self, df):
         self.df = df
         self.closedf = self.df[['date', 'close']].copy()
-        self.close_stock_2023 = self.closedf[self.closedf['date']
-                                             > '2023-01-01'].copy()
+        self.close_stock_2023 = self.closedf[self.closedf['date'] > '2023-01-01'].copy()
 
     def analyze_monthly_average(self):
-        monthvise = self.df.groupby(self.df['date'].dt.strftime('%B'))[
-            ['open', 'close']].mean()
+        monthvise = self.df.groupby(self.df['date'].dt.strftime('%B'))[['open', 'close']].mean()
         new_order = ['January', 'February', 'March', 'April', 'May', 'June',
                      'July', 'August', 'September', 'October', 'November', 'December']
         monthvise = monthvise.reindex(new_order, axis=0)
         return monthvise
 
     def plot_monthly_average_bar_chart(self, data):
-        fig, ax = plt.subplots()
-        data.plot(kind='bar', ax=ax, figsize=(12, 6))
-        plt.xlabel('Month')
-        plt.ylabel('Price')
-        plt.title('Trung bình giá giao dịch theo tháng')
+        fig = px.bar(data, x=data.index, y=['open', 'close'], labels={'value': 'Price', 'variable': 'Metric'},
+                    title='Trung bình giá giao dịch theo tháng')
+        fig.update_layout(
+            autosize=False,
+            width=12*80,
+            height=6*80,
+            barmode='group',
+            title_x=0.4
+        )
         return fig
 
     def plot_quarterly_average_bar_chart(self):
-        fig, ax = plt.subplots()
-        self.df.groupby(self.df['date'].dt.quarter)[['open', 'close']].mean().plot(
-            kind='bar', ax=ax, figsize=(10, 6))
-        plt.xlabel('Quarter')
-        plt.ylabel('Price')
-        plt.title('Giá trung bình theo quý')
+        fig = px.bar(self.df.groupby(self.df['date'].dt.quarter)[['open', 'close']].mean().reset_index(),
+                     x='date', y=['open', 'close'], labels={'value': 'Price', 'variable': 'Metric'},
+                     title='Giá trung bình theo quý')
+        fig.update_layout(
+            autosize=False,
+            width=12*80,
+            height=6*80,
+            barmode='group',
+            title_x=0.4
+        )
         return fig
-
     def plot_yearly_average_line_chart(self):
-        fig, ax = plt.subplots()
-        self.df.groupby(self.df['date'].dt.year)[['open', 'close', 'High', 'low']].mean(
-        ).plot(kind='line', ax=ax, figsize=(12, 6))
-        plt.xlabel('Year')
-        plt.ylabel('Price')
-        plt.title('Giá trung bình theo năm')
+        fig = px.line(self.df.groupby(self.df['date'].dt.year)[['open', 'close', 'High', 'low']].mean().reset_index(),
+                      x='date', y=['open', 'close', 'High', 'low'], labels={'value': 'Price', 'variable': 'Metric'},
+                      title='Giá trung bình theo năm')
+        fig.update_layout(
+            autosize=False,
+            width=12*80,
+            height=6*80,
+            title_x=0.4
+        )
         return fig
 
     def relationship_correlation(self):
-        # Vẽ heatmap thể hiện độ tương quan giữa các biến
         columns_to_corr = ['close', 'open', 'High', 'low', 'volume']
         corr = self.df[columns_to_corr].corr()
-        sns.heatmap(corr, cmap='coolwarm', annot=True)
-        plt.title('Tương quan giữa các biến ')
-        fig_heatmap = plt.gcf()
-        # Vẽ Pairplot
-        sns.pairplot(data=self.df[columns_to_corr])
-        plt.suptitle('Mối quan hệ giữa các biến', y=1.02)
-        fig_pairplot = plt.gcf()
+
+        fig_heatmap = ff.create_annotated_heatmap(z=corr.values, x=columns_to_corr, y=columns_to_corr)
+        fig_heatmap.update_layout(title='Tương quan giữa các biến ')
+
+        fig_pairplot = px.scatter_matrix(self.df[columns_to_corr], title='Mối quan hệ giữa các biến')
+        fig_heatmap.update_layout(
+            autosize=False,
+            width=12*80,
+            height=6*80,
+            title_x=0.4
+        )
+        fig_pairplot.update_layout(
+            autosize=False,
+            width=12*80,
+            height=6*80,
+            title_x=0.4
+        )
         return fig_heatmap, fig_pairplot
 
     def distribution_closeprice(self):
-        plt.figure(figsize=(10, 6))
-        sns.histplot(self.df['close'], bins=30, kde=True, color='skyblue')
-        plt.title('Phân phối close Prices ', fontsize=14)
-        plt.xlabel('Close Price', fontsize=12)
-        plt.ylabel('Frequency', fontsize=12)
-        # Đo độ xiên của dữ liệu
+        fig = px.histogram(self.df, x='close', nbins=30, title='Phân phối close Prices ')
         skewness = self.df['close'].skew()
-        fig = plt.gcf()
+        fig.update_layout(
+            autosize=False,
+            width=12*80,
+            height=6*80,
+            title_x=0.4,
+            bargap=0.03
+        )
         return fig, skewness
 
     def plot_close_price_comparision(self):
         self.closedf['Year'] = self.closedf['date'].dt.year
-        self.closedf['Month'] = self.closedf['date'].dt.month - 1
+        self.closedf['Month'] = self.closedf['date'].dt.month
         years_of_interest = [2021, 2022, 2023]
-        df_filtered = self.closedf[self.closedf['Year'].isin(
-            years_of_interest)]
-        grouped_data = df_filtered.groupby(['Month', 'Year'])[
-            'close'].mean().reset_index()
+        df_filtered = self.closedf[self.closedf['Year'].isin(years_of_interest)]
+        grouped_data = df_filtered.groupby(['Month', 'Year'])['close'].mean().reset_index()
 
-        plt.figure(figsize=(10, 6))
-        ax = sns.barplot(x='Month', y='close', hue='Year',
-                         data=grouped_data, palette='viridis')
-        trendline_data = df_filtered[df_filtered['Year'] == 2022].groupby(['Month'])[
-            'close'].mean().reset_index()
-        sns.regplot(x='Month', y='close', data=trendline_data, ci=None, scatter=False,
-                    ax=ax, line_kws={'linestyle': '-', 'color': 'red'}, label='Trendline 2022')
-        plt.xlabel('Month')
-        plt.ylabel('Close Price Average')
-        plt.title('Trung bình giá đóng cửa theo tháng và năm (2021, 2022, 2023)')
-        plt.legend(title='Year', loc='upper right')
-        st.pyplot(plt.gcf())
+        fig = go.Figure()
 
+        for year in years_of_interest:
+            year_data = grouped_data[grouped_data['Year'] == year]
+            fig.add_trace(go.Bar(x=year_data['Month'], y=year_data['close'], name=str(year)))
+
+        trendline_data = df_filtered[df_filtered['Year'] == 2022].groupby(['Month'])['close'].mean().reset_index()
+        fig.add_trace(go.Scatter(x=trendline_data['Month'], y=trendline_data['close'],
+                                mode='lines', line=dict(color='red'), name='Trendline 2022'))
+
+        fig.update_layout(
+            barmode='group',
+            title='Trung bình giá đóng cửa theo tháng và năm (2021, 2022, 2023)',
+            xaxis_title='Month',
+            yaxis_title='Close Price Average',
+            legend_title='Year',
+            autosize=False,
+            width=12*80,
+            height=6*80,
+            title_x=0.3
+        )
+
+        return fig
+    
     def plot_close_prices_2023_bymonth(self):
-        # Tạo biểu đồ
-        fig, ax = plt.subplots(figsize=(10, 6))
-        ax.bar(self.close_stock_2023.groupby(self.close_stock_2023['date'].dt.month)['close'].mean().index,
-               self.close_stock_2023.groupby(self.close_stock_2023['date'].dt.month)[
-            'close'].mean(),
-            color="skyblue")
+        fig = px.bar(self.close_stock_2023.groupby(self.close_stock_2023['date'].dt.month)['close'].mean().reset_index(),
+                    x='date', y='close', title='Trung bình close prices theo tháng năm 2023',
+                    labels={'close': 'Price'})
         x_values = np.unique(self.close_stock_2023['date'].dt.month)
-        y_values = self.close_stock_2023.groupby(
-            self.close_stock_2023['date'].dt.month)['close'].mean()
+        y_values = self.close_stock_2023.groupby(self.close_stock_2023['date'].dt.month)['close'].mean()
         slope, intercept = np.polyfit(x_values, y_values, 1)
-        ax.plot(x_values, slope * x_values + intercept,
-                color='red', linestyle='solid')
-        ax.set(xlabel='Month', ylabel='Price', ylim=(50, 280),
-               title='Trung bình close prices theo tháng năm 2023')
-
-        # Hiển thị biểu đồ
-        st.pyplot(fig)
+        fig.add_trace(go.Scatter(x=x_values, y=slope * x_values + intercept,
+                                mode='lines', line=dict(color='red')))
+        fig.update_layout(
+            autosize=False,
+            width=12*80,
+            height=6*80,
+            barmode='group',
+            title_x=0.4
+        )
+        return fig
 
     def plot_profit_margin_comparison(self):
         self.closedf['Return'] = self.closedf['close'].pct_change() * 100
-        plt.figure(figsize=(12, 6))
+
+        fig = go.Figure()
+
         for year in [2021, 2022, 2023]:
             data_year = self.closedf[self.closedf['date'].dt.year == year]
-            plt.plot(data_year['date'], data_year['Return'], label=str(year))
-        plt.title('So sánh tỷ suất lợi nhuận giữa các năm')
-        plt.xlabel('Date')
-        plt.ylabel('Profit margin (%)')
-        plt.legend()
-        st.pyplot(plt.gcf())
+            fig.add_trace(go.Scatter(x=data_year['date'], y=data_year['Return'], mode='lines', name=str(year)))
+
+        fig.update_layout(
+            title='So sánh tỷ suất lợi nhuận giữa các năm',
+            xaxis_title='Date',
+            yaxis_title='Profit margin (%)',
+            legend_title='Year',
+            autosize=False,
+            width=12*80,
+            height=6*80,
+            title_x=0.4
+        )
+
+        return fig
 # Class model
 class TRAIN_MODELS:
     def __init__(self, df):
@@ -167,45 +201,58 @@ class TRAIN_MODELS:
         prediction_column = self.closedf['close'].rolling(
             window=window_size).mean()
         return prediction_column
-
+    #     # Các chỉ số đánh giá:
     def plot_dynamic_moving_average(self, window_size=1):
-        # Tính cột predict cho window_size cụ thể
-        prediction_column = self.dynamic_moving_average(
-            window_size=window_size)
+        prediction_column = self.dynamic_moving_average(window_size=window_size)
         prediction_column = prediction_column[-window_size:]
-        prediction_column.index = np.arange(max(self.closedf.index), max(
-            self.closedf.index)+len(prediction_column))
-        # Vẽ biểu đồ
-        fig, ax = plt.subplots(figsize=(12, 6))
-        self.closedf['close'].plot(
-            ax=ax, label='Actual Close Price', legend=True)
-        prediction_column.plot(ax=ax, label=f'Dynamic Moving Average (Window = {window_size})', linestyle='-',
-                               color='red')
-        ax.set(xlabel='Date', ylabel='Close Price',
-               title=f'Dynamic Moving Average Model (Window = {window_size})')
-        ax.legend()
+        prediction_column.index = np.arange(
+            max(self.closedf.index), max(self.closedf.index) + len(prediction_column))
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(x=self.closedf.index, y=self.closedf['close'],
+                                mode='lines', name='Actual Close Price'))
+        fig.add_trace(go.Scatter(x=prediction_column.index, y=prediction_column,
+                                mode='lines', line=dict(color='red'),
+                                name=f' Moving Average (Window = {window_size})'))
+        fig.update_layout(
+            title=f'Dynamic Moving Average Model (Window = {window_size})',
+            xaxis_title='Date',
+            yaxis_title='Close Price',
+            legend_title='Legend',
+            autosize=False,
+            width=13*80,
+            height=6*80,
+            title_x=0.3
+        )
 
-        # Hiển thị biểu đồ trong Streamlit
-        st.pyplot(fig)
-
+        return fig
     def plot_dynamic_moving_average_acuracy(self, window_size=1):
         # Tính cột predict cho window_size cụ thể
-        prediction_column = self.dynamic_moving_average(
-            window_size=window_size)
-        # Vẽ biểu đồ
-        fig, ax = plt.subplots(figsize=(12, 6))
-        self.closedf['close'].plot(
-            ax=ax, label='Actual Close Price', legend=True)
-        prediction_column.plot(ax=ax, label=f'Dynamic Moving Average (Window = {window_size})', linestyle='-',
-                               color='red')
-        ax.set(xlabel='Date', ylabel='Close Price',
-               title=f'Dynamic Moving Average Model (Window = {window_size})')
-        ax.legend()
+        prediction_column = self.dynamic_moving_average(window_size=window_size)
 
-        # Hiển thị biểu đồ trong Streamlit
-        st.pyplot(fig)
-        # Các chỉ số đánh giá:
+        # Tạo đồ thị Plotly
+        fig = go.Figure()
 
+        # Vẽ đường cho Actual Close Price
+        fig.add_trace(go.Scatter(x=self.closedf.index, y=self.closedf['close'],
+                                mode='lines', name='Actual Close Price'))
+
+        # Vẽ đường cho Dynamic Moving Average
+        fig.add_trace(go.Scatter(x=prediction_column.index, y=prediction_column,
+                                mode='lines', line=dict(color='red'),
+                                name=f'Moving Average (Window = {window_size})'))
+
+        fig.update_layout(
+            title=f'Dynamic Moving Average Model (Window = {window_size})',
+            xaxis_title='Date',
+            yaxis_title='Close Price',
+            legend_title='Legend',
+            autosize=False,
+            width=13*80,
+            height=6*80,
+            title_x=0.3
+        )
+
+        return fig
     def evaluate_dynamic_moving_average(self, window_size=1):
         mae = mean_absolute_error(
             self.closedf['close'][window_size-1:], self.closedf['Predict'][window_size-1:])
@@ -255,32 +302,49 @@ class TRAIN_MODELS:
         return forecast_values
 
     def plot_ses_results(self):
-        plt.figure(figsize=(12, 6))
-        self.closedf['SES_Optimal_Optuna'].plot(
-            legend=True, label=f'SES (Optimal Alpha - Optuna = {self.best_alpha_optuna:.3f})')
-        plt.xlabel('Date')
-        plt.ylabel('Price')
-        plt.title(
-            f'Simple Exponential Smoothing (Optimal Alpha = {self.best_alpha_optuna:.3f})')
-        self.closedf['close'].plot(legend=True)
-        return plt
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(x=self.closedf.index, y=self.closedf['SES_Optimal_Optuna'],
+                                mode='lines', name=f'SES (Optimal Alpha = {self.best_alpha_optuna:.3f})'))
+        fig.add_trace(go.Scatter(x=self.closedf.index, y=self.closedf['close'],
+                                mode='lines', name='Actual Close Price'))
+        fig.update_layout(
+            title=f'Simple Exponential Smoothing (Optimal Alpha = {self.best_alpha_optuna:.3f})',
+            xaxis_title='Date',
+            yaxis_title='Price',
+            legend_title='Legend',
+            autosize=False,
+            width=13*80,
+            height=6*80,
+            title_x=0.3
+        )
+        return fig
 
     def plot_ses_forecast_results(self, forecast_values):
-        plt.figure(figsize=(12, 6))
+        fig = go.Figure()
         forecast_column = forecast_values
-        forecast_column.index = np.arange(max(self.closedf.index), max(
-            self.closedf.index)+len(forecast_column))
-        forecast_column.plot(
-            legend=True, label=f'SES (Optimal Alpha - Optuna = {self.best_alpha_optuna:.3f})')
-        plt.xlabel('Date')
-        plt.ylabel('Price')
-        plt.title(
-            f'Simple Exponential Smoothing (Optimal Alpha = {self.best_alpha_optuna:.3f})')
-        self.closedf['close'].plot(legend=True)
+        forecast_column.index = np.arange(
+            max(self.closedf.index), max(self.closedf.index) + len(forecast_column))
+        fig.add_trace(go.Scatter(x=forecast_column.index, y=forecast_column,
+                                mode='lines', name=f'SES (Optimal Alpha = {self.best_alpha_optuna:.3f})'))
+        fig.add_trace(go.Scatter(x=self.closedf.index, y=self.closedf['close'],
+                                mode='lines', name='Actual Close Price'))
+
+        fig.update_layout(
+            title=f'Simple Exponential Smoothing (Optimal Alpha = {self.best_alpha_optuna:.3f})',
+            xaxis_title='Date',
+            yaxis_title='Price',
+            legend_title='Legend',
+            autosize=False,
+            width=13*80,
+            height=6*80,
+            title_x=0.3
+        )
+
         st.write("Optimal Alpha:", self.best_alpha_optuna)
         st.write("Best MAE - Optuna:", self.mae)
         self.progress_bar.empty()
-        return plt
+
+        return fig
     # Holt model
 
     def optimize_alpha_beta_optuna(self, n_trials=200):
@@ -314,33 +378,51 @@ class TRAIN_MODELS:
         self.closedf['Holt_Optimal_Optuna'] = model.fittedvalues
         forecast_values = model.forecast(steps=steps)
         return forecast_values
-
     def plot_holt_results(self):
-        plt.figure(figsize=(12, 6))
-        self.closedf['Holt_Optimal_Optuna'].plot(
-            legend=True, label=f'Holt (Optimal Alpha= {self.best_alpha_optuna:.3f}, Optimal Beta= {self.best_beta_optuna:.3f})')
-        plt.xlabel('Date')
-        plt.ylabel('Price')
-        plt.title('Holt Model (Optimal Alpha/Beta)')
-        self.closedf['close'].plot(legend=True)
-        return plt
-
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(x=self.closedf.index, y=self.closedf['Holt_Optimal_Optuna'],
+                                mode='lines',
+                                name=f'Holt (Alpha= {self.best_alpha_optuna:.3f}, Beta= {self.best_beta_optuna:.3f})'))
+        fig.add_trace(go.Scatter(x=self.closedf.index, y=self.closedf['close'],
+                                mode='lines', name='Actual Close Price'))
+        fig.update_layout(
+            title='Holt Model (Optimal Alpha/Beta)',
+            xaxis_title='Date',
+            yaxis_title='Price',
+            legend_title='Legend',
+            autosize=False,
+            width=13*80,
+            height=6*80,
+            title_x=0.3
+        )
+        return fig
     def plot_forecast_holt_results(self, forecast_values):
-        plt.figure(figsize=(12, 6))
+        fig = go.Figure()
         forecast_column = forecast_values
-        forecast_column.index = np.arange(max(self.closedf.index), max(
-            self.closedf.index)+len(forecast_column))
-        forecast_column.plot(
-            legend=True, label=f'Holt (Optimal Alpha= {self.best_alpha_optuna:.3f}, Optimal Beta= {self.best_beta_optuna:.3f})')
-        plt.xlabel('Date')
-        plt.ylabel('Price')
-        plt.title('Holt Model (Optimal Alpha/Beta)')
-        self.closedf['close'].plot(legend=True)
+        forecast_column.index = np.arange(
+            max(self.closedf.index), max(self.closedf.index) + len(forecast_column))
+        fig.add_trace(go.Scatter(x=forecast_column.index, y=forecast_column,
+                                mode='lines',
+                                name=f'Holt (Alpha= {self.best_alpha_optuna:.3f}, Beta= {self.best_beta_optuna:.3f})'))
+        fig.add_trace(go.Scatter(x=self.closedf.index, y=self.closedf['close'],
+                                mode='lines', name='Actual Close Price'))
+        fig.update_layout(
+            title='Holt Model (Optimal Alpha/Beta)',
+            xaxis_title='Date',
+            yaxis_title='Price',
+            legend_title='Legend',
+            autosize=False,
+            width=13*80,
+            height=6*80,
+            title_x=0.3
+        )
+
         st.write("Optimal Alpha:", self.best_alpha_optuna)
         st.write("Optimal Beta:", self.best_beta_optuna)
         st.write("Best MAE - Optuna:", self.mae)
         self.progress_bar.empty()
-        return plt
+
+        return fig
     # Holt winter model
 
     def optimize_holtwinter(self, seasonal_periods=60, n_trials=200):
@@ -383,35 +465,56 @@ class TRAIN_MODELS:
         self.closedf['Holt_Winters_Optimal'] = model.fittedvalues
         forecast_values = model.forecast(steps=steps)
         return forecast_values
-
     def plot_holtwinter_results(self):
-        plt.figure(figsize=(12, 6))
-        self.closedf['Holt_Winters_Optimal'].plot(
-            legend=True, label=f'Holt-Winters (Alpha:{self.best_alpha_optuna:.3f},Beta:{self.best_beta_optuna:.3f}, Gamma:{self.best_gamma_optuna:.3f}, Seasonal:{self.best_seasonal_optuna})')
-        plt.xlabel('Date')
-        plt.ylabel('Price')
-        plt.title('Holt-Winters (Optimal Alpha/Beta/Gamma/Seasonal)')
-        self.closedf['close'].plot(legend=True)
-        return plt
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(x=self.closedf.index, y=self.closedf['Holt_Winters_Optimal'],
+                                mode='lines',
+                                name=f'Holt-Winters (Alpha:{self.best_alpha_optuna:.3f},Beta:{self.best_beta_optuna:.3f}, Gamma:{self.best_gamma_optuna:.3f}, Seasonal:{self.best_seasonal_optuna})'))
+        fig.add_trace(go.Scatter(x=self.closedf.index, y=self.closedf['close'],
+                                mode='lines', name='Actual Close Price'))
+
+        fig.update_layout(
+            title='Holt-Winters (Optimal Alpha/Beta/Gamma/Seasonal)',
+            xaxis_title='Date',
+            yaxis_title='Price',
+            legend_title='Legend',
+            autosize=False,
+            width=13*80,
+            height=6*80,
+            title_x=0.3
+        )
+        return fig
 
     def plot_forecast_holtwinter_results(self, forecast_values):
-        plt.figure(figsize=(12, 6))
+        fig = go.Figure()
         forecast_column = forecast_values
-        forecast_column.index = np.arange(max(self.closedf.index), max(
-            self.closedf.index)+len(forecast_column))
-        forecast_column.plot(
-            legend=True, label=f'Holt-Winters (Alpha:{self.best_alpha_optuna:.3f},Beta:{self.best_beta_optuna:.3f}, Gamma:{self.best_gamma_optuna:.3f}, Seasonal:{self.best_seasonal_optuna})')
-        plt.xlabel('Date')
-        plt.ylabel('Price')
-        plt.title('Holt-Winters (Optimal Alpha/Beta/Gamma/Seasonal)')
-        self.closedf['close'].plot(legend=True)
+        forecast_column.index = np.arange(
+            max(self.closedf.index), max(self.closedf.index) + len(forecast_column))
+        fig.add_trace(go.Scatter(x=forecast_column.index, y=forecast_column,
+                                mode='lines',
+                                name=f'Holt-Winters (Alpha:{self.best_alpha_optuna:.3f},Beta:{self.best_beta_optuna:.3f}, Gamma:{self.best_gamma_optuna:.3f}, Seasonal:{self.best_seasonal_optuna})'))
+        fig.add_trace(go.Scatter(x=self.closedf.index, y=self.closedf['close'],
+                                mode='lines', name='Actual Close Price'))
+
+        fig.update_layout(
+            title='Holt-Winters (Optimal Alpha/Beta/Gamma/Seasonal)',
+            xaxis_title='Date',
+            yaxis_title='Price',
+            legend_title='Legend',
+            autosize=False,
+            width=13*80,
+            height=6*80,
+            title_x=0.3
+        )
+
         st.write("Optimal Alpha:", self.best_alpha_optuna)
         st.write("Optimal Beta:", self.best_beta_optuna)
         st.write("Optimal Gamma:", self.best_gamma_optuna)
         st.write("Optimal Seasonal:", self.best_seasonal_optuna)
         st.write("Best MAE:", self.mae)
         self.progress_bar.empty()
-        return plt
+
+        return fig   
     # Đánh giá Model
 
     def evaluate_model(self, columns):
@@ -428,6 +531,7 @@ class TIME_SERIES:
     def __init__(self,df):
         self.df = df
         self.closedf = self.df[['close','date']].copy()
+    
     # def plot_seasonal_analysis(self,forecast_values):
         
 
@@ -638,27 +742,27 @@ def statistical_des():
     st.subheader("Kiểm tra sự khác biệt các biến")
     with st.expander("Trung bình giá giao dịch theo tháng"):
         sub_month = stock_statistic_dv.analyze_monthly_average()
-        st.pyplot(stock_statistic_dv.plot_monthly_average_bar_chart(sub_month))
+        st.plotly_chart(stock_statistic_dv.plot_monthly_average_bar_chart(sub_month))
     with st.expander("Trung bình giá giao dịch theo năm"):
-        st.pyplot(stock_statistic_dv.plot_yearly_average_line_chart())
-    fig_heatmap, fig_pairplot = stock_statistic_dv.relationship_correlation()
+        st.plotly_chart(stock_statistic_dv.plot_yearly_average_line_chart())
+        fig_heatmap, fig_pairplot = stock_statistic_dv.relationship_correlation()
     with st.expander("Heatmap"):
-        st.pyplot(fig_heatmap)
+        st.plotly_chart(fig_heatmap)
     with st.expander("Pairplot"):
-        st.pyplot(fig_pairplot)
+        st.plotly_chart(fig_pairplot)
     st.subheader("Phân phối cổ phiếu")
     with st.expander("Histogram"):
         fig_distribution, skewness = stock_statistic_dv.distribution_closeprice()
-        st.pyplot(fig_distribution)
+        st.plotly_chart(fig_distribution)
         st.write("Độ xiên close price:", skewness)
     st.subheader("Cổ phiếu 2023")
     with st.expander("Trung bình close prices theo tháng năm 2023"):
-        stock_statistic_dv.plot_close_prices_2023_bymonth()
+        st.plotly_chart(stock_statistic_dv.plot_close_prices_2023_bymonth())
     st.subheader("So sánh với các năm")
     with st.expander("Trung bình giá đóng cửa theo tháng và năm (2021, 2022, 2023)"):
-        stock_statistic_dv.plot_close_price_comparision()
+        st.plotly_chart(stock_statistic_dv.plot_close_price_comparision())
     with st.expander("Tỷ suất lợi nhuận"):
-        stock_statistic_dv.plot_profit_margin_comparison()
+        st.plotly_chart(stock_statistic_dv.plot_profit_margin_comparison())
 
 
 def predict():
@@ -684,17 +788,17 @@ def predict():
         model_trainer = TRAIN_MODELS(data)
         if model == 'Holt Winter':
             best_alpha_optuna_hw, best_beta_optuna_hw, best_gamma_optuna_hw, best_seasonal_optuna_hw, mae_best_holtwinter_hw = model_trainer.optimize_holtwinter(
-                seasonal_periods=60, n_trials=200)
+                seasonal_periods=60, n_trials=100)
             forecast_values_hw = model_trainer.fit_optimal_holtwinter_model(
                 best_alpha_optuna_hw, best_beta_optuna_hw, best_gamma_optuna_hw, 60, best_seasonal_optuna_hw, steps=num)
             tab1, tab2, tab3 = st.tabs(
                 ["📈 Chart train", "📈 Chart predict", "🗃 Data"])
             with tab1:
-                st.pyplot(model_trainer.plot_holtwinter_results())
+                st.plotly_chart(model_trainer.plot_holtwinter_results())
                 model_trainer.evaluate_model(
                     columns=model_trainer.closedf['Holt_Winters_Optimal'])
             with tab2:
-                st.pyplot(model_trainer.plot_forecast_holtwinter_results(
+                st.plotly_chart(model_trainer.plot_forecast_holtwinter_results(
                     forecast_values=forecast_values_hw))
             with tab3:
                 forecast_pred = forecast_values_hw.values
@@ -710,11 +814,11 @@ def predict():
             tab1, tab2, tab3 = st.tabs(
                 ["📈 Chart train", "📈 Chart predict", "🗃 Data"])
             with tab1:
-                st.pyplot(model_trainer.plot_holt_results())
+                st.plotly_chart(model_trainer.plot_holt_results())
                 model_trainer.evaluate_model(
                     columns=model_trainer.closedf['Holt_Optimal_Optuna'])
             with tab2:
-                st.pyplot(model_trainer.plot_forecast_holt_results(
+                st.plotly_chart(model_trainer.plot_forecast_holt_results(
                     forecast_values=forecast_values_holt))
             with tab3:
                 forecast_pred = forecast_values_holt.values
@@ -730,11 +834,11 @@ def predict():
             tab1, tab2, tab3 = st.tabs(
                 ["📈 Chart train", "📈 Chart predict", "🗃 Data"])
             with tab1:
-                st.pyplot(model_trainer.plot_ses_results())
+                st.plotly_chart(model_trainer.plot_ses_results())
                 model_trainer.evaluate_model(
                     columns=model_trainer.closedf['SES_Optimal_Optuna'])
             with tab2:
-                st.pyplot(model_trainer.plot_ses_forecast_results(
+                st.plotly_chart(model_trainer.plot_ses_forecast_results(
                     forecast_values=forecast_values))
             with tab3:
                 forecast_pred = forecast_values.values
@@ -748,11 +852,13 @@ def predict():
             tab1, tab2, tab3 = st.tabs(
                 ["📈 Chart train", "📈 Chart predict", "🗃 Data"])
             with tab1:
-                model_trainer.plot_dynamic_moving_average(window_size=num)
+                fig_movingaverage = model_trainer.plot_dynamic_moving_average_acuracy(window_size=num)
+                st.plotly_chart(fig_movingaverage)
                 model_trainer.evaluate_dynamic_moving_average(window_size=num)
             with tab2:
-                model_trainer.plot_dynamic_moving_average_acuracy(
+                fig_movingaverage2 = model_trainer.plot_dynamic_moving_average(
                     window_size=num)
+                st.plotly_chart(fig_movingaverage2)
             with tab3:
                 forecast_pred = model_trainer.closedf['Predict'][-num:]
                 day = 1
