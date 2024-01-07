@@ -5,7 +5,12 @@
 ## Mục Đích Dự Án
 
 Dự án này tập trung vào việc phát triển một hệ thống dự đoán giá cổ phiếu bằng Python. Chúng ta sẽ sử dụng các kỹ thuật học máy để phân tích dữ liệu lịch sử và dự đoán xu hướng giá cổ phiếu trong tương lai.
-
+## Những việc sẽ làm (Table of contents)
+- [Cài Đặt](#cài-đặt)
+- [Sử Dụng](#sử-dụng)
+- [Tính Năng](#tính-năng)
+- [Đóng Góp](#đóng-góp)
+- [Bản Quyền](#bản-quyền)
 ## Cách Cài Đặt
 
 1. Clone dự án về máy local của bạn:
