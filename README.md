@@ -107,9 +107,9 @@ Happy coding!
 
 [contributors-shield]: https://img.shields.io/github/contributors/davisduccopny/Stock-Prediction-with-Python-project?style=for-the-badge&label=Contributors 
 [contributors-url]:https://github.com/davisduccopny/Stock-Prediction-with-Python-project/graphs/contributors 
-[forks-shield]:https://img.shields.io/github/forks/MicroGix/Influence-of-factors-on-students-performence?label=Folks&style=for-the-badge
+[forks-shield]:https://img.shields.io/github/forks/davisduccopny/Stock-Prediction-with-Python-project?label=Folks&style=for-the-badge
 [forks-url]: https://github.com/davisduccopny/Stock-Prediction-with-Python-project/forks
-[stars-shield]: https://img.shields.io/github/stars/MicroGix/Influence-of-factors-on-students-performence?style=for-the-badge&label=Stars
+[stars-shield]: https://img.shields.io/github/stars/davisduccopny/Stock-Prediction-with-Python-project?style=for-the-badge&label=Stars
 [stars-url]: https://github.com/davisduccopny/Stock-Prediction-with-Python-project/stargazers
-[issues-shield]: https://img.shields.io/github/issues/MicroGix/Influence-of-factors-on-students-performence?style=for-the-badge&label=Issues
+[issues-shield]: https://img.shields.io/github/issues/davisduccopny/Stock-Prediction-with-Python-project?style=for-the-badge&label=Issues
 [issues-url]: https://github.com/davisduccopny/Stock-Prediction-with-Python-project/issues
