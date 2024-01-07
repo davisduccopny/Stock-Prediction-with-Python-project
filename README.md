@@ -71,11 +71,13 @@ Dự án này tập trung vào việc phát triển một hệ thống dự đo�
 - `train_folder/`: Chứa các notebook Jupyter cho phân tích và dự đoán ( Contains Jupyter notebooks for analysis and prediction).
 - `asset/image/`: Lưu trữ ảnh của dự án (Stores project images)
 - `info_stock/`: Lưu trữ thông tin cổ phiếu (Stores stock information).
+- `introduction`: Bản thảo word của dự án (Word draft of the project).
+- `app_test.py`: Tệp chứa giao diện demo thuật toán (The file contains the algorithm demo interface)
 
 ## Đóng Góp (Contribution)
 
 Nếu bạn muốn đóng góp vào dự án, hãy tạo một nhánh mới và gửi yêu cầu kéo (pull request). Chúng ta sẽ rất vui khi nhận được sự đóng góp của bạn!
-If you want to contribute to the project, create a new branch and submit a pull request. We would be delighted to receive your contributions!
+(If you want to contribute to the project, create a new branch and submit a pull request. We would be delighted to receive your contributions!)
 
 ## Tác Giả (Author)
 
