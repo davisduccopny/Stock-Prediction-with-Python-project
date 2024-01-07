@@ -80,7 +80,7 @@ Nếu bạn muốn đóng góp vào dự án, hãy tạo một nhánh mới và 
 - Thành viên dự án:
     - Hoàng Xuân Quốc - 2156210125
     - Đặng Hoàng Chiến - 2156210095
-    - Nguyễn Viết Đức - 21562101002156210100
+    - Nguyễn Viết Đức - 2156210100
 - GitHub: [Your GitHub Profile](https://github.com/davisduccopny/)
 
 ## Giấy Phép
