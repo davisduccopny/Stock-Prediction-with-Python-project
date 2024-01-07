@@ -1,6 +1,7 @@
 # Prediction Stock With Python Project
 
 ![Project Image](./asset/image/homepage.png)
+<img src="./asset/image/image_industry.jpg" alt="Logo" width="200" height="200" style="border-radius:50%">
 <div align="center">
     
 [![Contributors][contributors-shield]][contributors-url]
@@ -11,18 +12,19 @@
 </div>
 
 ## Những việc sẽ làm (Table of contents)
-- [Cài Đặt](#cách-cài-đặt)
-- [Sử Dụng](#cách-sử-dụng)
-- [Mục đích dự án](#mục-đích-dự-án)
-- [Đóng Góp](#đóng-góp)
-- [Tác giả](#đóng-góp)
-- [Bản Quyền](#giấy-phép)
+- [Cài Đặt](#cách-cài-đặt-installation)
+- [Mục đích dự án](#mục-đích-dự-án-project-purpose)
+- [Sử Dụng](#cách-sử-dụng-usage)
+- [Cấu trúc thư mục](#cấu-trúc-thư-mục-directory-structure)
+- [Đóng Góp](#đóng-góp-contribution)
+- [Tác giả](#tác-giả-author)
+- [Bản Quyền](#giấy-phép-license)
 
-## Mục Đích Dự Án
+## Mục Đích Dự Án (project purpose)
 
 Dự án này tập trung vào việc phát triển một hệ thống dự đoán giá cổ phiếu bằng Python. Chúng ta sẽ sử dụng các kỹ thuật học máy để phân tích dữ liệu lịch sử và dự đoán xu hướng giá cổ phiếu trong tương lai.
 
-## Cách Cài Đặt(Installation)
+## Cách Cài Đặt (Installation)
 
 1. Clone dự án về máy local của bạn (Clone the project to your local machine:):
 
@@ -99,7 +101,7 @@ Nếu bạn muốn đóng góp vào dự án, hãy tạo một nhánh mới và 
     | Nguyễn Viết Đức      | 2156210100                    | 2156210100@hcmussh.edu.vn      |
 - GitHub: [Your GitHub Profile](https://github.com/davisduccopny/)
 
-## Giấy Phép
+## Giấy Phép (license)
 
 Dự án này được phân phối dưới giấy phép [MIT License](LICENSE).
 
