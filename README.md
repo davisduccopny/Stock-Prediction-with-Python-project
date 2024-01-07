@@ -2,13 +2,12 @@
 
 ![Project Image](./asset/image/homepage.png)
 <div align="center">
-	
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
-
 </div>
+
 ## Những việc sẽ làm (Table of contents)
 - [Cài Đặt](#cách-cài-đặt)
 - [Sử Dụng](#cách-sử-dụng)
