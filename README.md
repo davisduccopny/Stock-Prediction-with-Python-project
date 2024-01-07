@@ -105,7 +105,7 @@ Dự án này được phân phối dưới giấy phép [MIT License](LICENSE).
 ---
 Happy coding!
 
-[contributors-shield]: https://img.shields.io/github/contributors/MicroGix/Influence-of-factors-on-students-performence?style=for-the-badge&label=Contributors 
+[contributors-shield]: https://img.shields.io/github/contributors/davisduccopny/Stock-Prediction-with-Python-project?style=for-the-badge&label=Contributors 
 [contributors-url]:https://github.com/davisduccopny/Stock-Prediction-with-Python-project/graphs/contributors 
 [forks-shield]:https://img.shields.io/github/forks/MicroGix/Influence-of-factors-on-students-performence?label=Folks&style=for-the-badge
 [forks-url]: https://github.com/davisduccopny/Stock-Prediction-with-Python-project/forks
