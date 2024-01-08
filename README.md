@@ -1,7 +1,6 @@
 # Prediction Stock With Python Project
 
 ![Project Image](./asset/image/homepage.png)
-<img src="./asset/image/image_logo_main.png" alt="Logo" align="center">
 <div align="center">
     
 [![Contributors][contributors-shield]][contributors-url]
