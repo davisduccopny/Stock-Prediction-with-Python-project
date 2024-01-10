@@ -11,6 +11,7 @@ from sklearn.preprocessing import StandardScaler
 import plotly.express as px
 import plotly.graph_objects as go
 import plotly.figure_factory as ff
+import plantuml
 
 import os
 import numpy as np
@@ -30,7 +31,7 @@ from statsmodels.graphics.tsaplots import plot_acf
 from statsmodels.tsa.stattools import acf
 
 st.set_page_config(layout='wide',page_title="Stock Prediction", initial_sidebar_state='expanded')
-# Class thống kê mô tả :
+# Class thống kê mô tả
 class DESCRIPTIVE_STATISTICS:
     def __init__(self, df):
         self.df = df
@@ -69,8 +70,8 @@ class DESCRIPTIVE_STATISTICS:
         )
         return fig
     def plot_yearly_average_line_chart(self):
-        fig = px.line(self.df.groupby(self.df['date'].dt.year)[['open', 'close', 'High', 'low']].mean().reset_index(),
-                      x='date', y=['open', 'close', 'High', 'low'], labels={'value': 'Price', 'variable': 'Metric'},
+        fig = px.line(self.df.groupby(self.df['date'].dt.year)[['open', 'close', 'high', 'low']].mean().reset_index(),
+                      x='date', y=['open', 'close', 'high', 'low'], labels={'value': 'Price', 'variable': 'Metric'},
                       title='Giá trung bình theo năm')
         fig.update_layout(
             autosize=False,
@@ -81,7 +82,7 @@ class DESCRIPTIVE_STATISTICS:
         return fig
 
     def relationship_correlation(self):
-        columns_to_corr = ['close', 'open', 'High', 'low', 'volume']
+        columns_to_corr = ['close', 'open', 'high', 'low', 'volume']
         corr = self.df[columns_to_corr].corr()
 
         fig_heatmap = ff.create_annotated_heatmap(z=corr.values, x=columns_to_corr, y=columns_to_corr)
@@ -617,339 +618,355 @@ class TIME_SERIES:
 
         return fig_seasonal, fig_trend, fig_residual, fig_acf
 
-# Thêm mã HTML để căn giữa tiêu đề
+# Class Run
+class MAINCLASS:
+    def __init__(self):
+        self.stock_options = ['TSLA', 'BMW.DE', '7203.T', 'VOW3.DE', 'F']
+        self.option_stock_name = None
+        self.start_date = None
+        self.end_date = None
+        self.data = None
 
-st.markdown("<h1 style='text-align: center;'>Stock Price Predictions</h1>",
-            unsafe_allow_html=True)
-st.sidebar.markdown("""
-    <h1 style='font-size:35px;text-align:center'>TEAM 1</h1>
-""", unsafe_allow_html=True)    
-st.sidebar.markdown("""
-        <div style="display: flex; justify-content: center;margin-bottom:0">
-            <img src='https://scontent.fsgn5-9.fna.fbcdn.net/v/t39.30808-6/242489593_405101811147345_1733417058228090429_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=173fa1&_nc_ohc=bhYKiwdAEyAAX_l1-bz&_nc_ht=scontent.fsgn5-9.fna&oh=00_AfDuU3ENr2x7o-ugDanKzy0A7Xuz2cKIdHbuQTyQjAKRGg&oe=65983BAE' alt='Ten_Hinh_Anh' width='60%' style='border-radius:50%;margin-bottom:12%;'>
-        </div>
-        """, unsafe_allow_html=True)    
-st.sidebar.info(
-    '❤️Chào mừng đến với dự án❤️')
-st.sidebar.markdown(  """
-    ---
-    """)
-# Khai báo các hàm bổ sung và hàm main
-    ## Define hàm main
-def main():
-    st.sidebar.subheader('Lựa chọn tác vụ')
-    option = st.sidebar.radio('Chọn một tab:', [
-                              'Trực quan', 'Thống kê mô tả', 'Phân tách Times Series', 'Prediction'])
+    def run(self):
+        st.markdown("<h1 style='text-align: center;'>Stock Price Predictions</h1>", unsafe_allow_html=True)
+        
+        st.sidebar.markdown("""
+            <h1 style='font-size:35px;text-align:center'>TEAM 1</h1>
+        """, unsafe_allow_html=True)
 
-    if option == 'Trực quan':
-        introduction_stock()
-    elif option == 'Thống kê mô tả':
-        statistical_des()
-    elif option == 'Phân tách Times Series':
-        TimeSeries()
-    else:
-        predict()
-    ## Hàm cleaning data
-def clean_dataframe(dataframe):
-    dataframe = dataframe.rename(columns={'Date': 'date', 'Open': 'open', 'Hight': 'hight',
-                                 'Low': 'low', 'Close': 'close', 'Adj Close': 'adj_close', 'Volume': 'volume'})
-    dataframe['date'] = pd.to_datetime(dataframe.index, errors='coerce')
-    dataframe = dataframe.dropna()
-    dataframe = dataframe.drop_duplicates()
-    dataframe = dataframe.reset_index(drop=True)
-    return dataframe
-    ## Define hàm đọc file
-def display_file_content(file_path):
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    full_file_path = os.path.join(current_dir, file_path)
+        st.sidebar.markdown("""
+            <div style="display: flex; justify-content: center;margin-bottom:0">
+                <img src='https://scontent.fsgn5-9.fna.fbcdn.net/v/t39.30808-6/242489593_405101811147345_1733417058228090429_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=173fa1&_nc_ohc=bhYKiwdAEyAAX_l1-bz&_nc_ht=scontent.fsgn5-9.fna&oh=00_AfDuU3ENr2x7o-ugDanKzy0A7Xuz2cKIdHbuQTyQjAKRGg&oe=65983BAE' alt='Ten_Hinh_Anh' width='60%' style='border-radius:50%;margin-bottom:12%;'>
+            </div>
+            """, unsafe_allow_html=True)
 
-    if os.path.exists(full_file_path):
-        with open(full_file_path, "r", encoding="utf-8") as file:
-            try:
-                lines = file.readlines()
-                content = "\n".join(lines).strip()
-                st.info(f"### Giới thiệu\n{content}")
-            except UnicodeDecodeError:
-                st.error(
-                    f"Tệp tin '{full_file_path}' không thể đọc với encoding utf-8.")
-    else:
-        st.error(f"Tệp tin '{full_file_path}' không tồn tại.")
-    ## Define hàm load ảnh :
-def embed_image(file_path):
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    full_file_path = os.path.join(current_dir, file_path)
-    with open(full_file_path, "rb") as image_file:
-        encoded_image = base64.b64encode(image_file.read()).decode("utf-8")
-    html_code = f"""
-    <div style="display: flex; justify-content: center;">
-        <img src='data:image/jpeg;base64,{encoded_image}' alt='Ten_Hinh_Anh' width='100%' style='border-radius:60%; margin-bottom:5%;'>
-    </div>
-    """
-    st.markdown(html_code, unsafe_allow_html=True)
-# Bắt đầu load dữ liệu và chạy trang 
-    ## Tăng tốc tải bằng việc lưu dữ liệu vào cache
-@st.cache_resource
-    ## Hàm download data
-def download_data(op, start_date, end_date):
-    df = yf.download(op, start=start_date, end=end_date, progress=False)
-    return df
+        st.sidebar.info('❤️Chào mừng đến với dự án❤️')
+        st.sidebar.markdown("---")
 
+        
+    def main(self):
+        st.sidebar.subheader('Lựa chọn tác vụ')
+        option = st.sidebar.radio('Chọn một tab:', ['Trực quan', 'Thống kê mô tả', 'Phân tách Times Series', 'Prediction'])
 
-    ## Danh sách mã cổ phiếu
-stock_options = ['TSLA', 'BMW.DE', '7203.T', 'VOW3.DE', 'F']
-
-    ## Lựa chọn mã cổ phiếu thông qua select box
-st.sidebar.subheader('Mã cổ phiếu và thời gian')
-option_stock_name = st.sidebar.selectbox('Chọn mã cổ phiếu',stock_options)
-
-    ## Chuyển đổi mã cổ phiếu thành chữ hoa để đảm bảo tính nhất quán
-option_stock_name = option_stock_name.upper()
-today = datetime.date.today()
-    ## Nhập dữ liệu:
-with st.sidebar.container():
-    expander = st.expander("Times Select")
-    with expander:
-        duration = st.number_input('Enter the duration', value=1824)
-        before = today - datetime.timedelta(days=duration)
-        start_date = st.date_input('Start Date', value=before)
-        end_date = st.date_input('End date', today)
-        duration_2 = (end_date - start_date).days
-        st.info(f"Final duration: {duration_2} days")
-    ## Kiểm tra dữ liệu nếu cần
-if st.sidebar.button('Send'):
-    if start_date < end_date:
-        st.sidebar.success('Start date: `%s`\n\nEnd date: `%s`' %
-                           (start_date, end_date))
-        data = download_data(option_stock_name, start_date, end_date)
-        st.write(data.head())  
-    else:
-        st.sidebar.error('Error: End date must fall after start date')
-
-# Load dữ liệu
-data = download_data(option_stock_name, start_date, end_date)
-# Cleaning data
-data = clean_dataframe(data)
-    # Chạy hàm trang giới thiệu
-def introduction_stock():
-    if option_stock_name == 'TSLA':
-        st.header("Tesla, Inc. (TSLA)")
-    elif option_stock_name == '7203.T':
-        st.header("Toyota Motor Corporation (7203.T)")
-    elif option_stock_name == 'BMW.DE':
-        st.header("BMW AG (BMW.DE)")
-    elif option_stock_name == 'VOW3.DE':
-        st.header("Volkswagen AG (VOW3.DE)")
-    else:
-        st.header("Ford Motor Company (F)")
-    option = st.radio(
-        'Choose a Technical Indicator to Visualize', ['Close', 'BB'])
-
-    # Bollinger bands
-    bb_indicator = BollingerBands(data.close)
-    bb = data
-    bb['bb_h'] = bb_indicator.bollinger_hband()
-    bb['bb_l'] = bb_indicator.bollinger_lband()
-    # Creating a new dataframe
-    bb = bb[['close', 'bb_h', 'bb_l']]
-    total_volume = data['volume'].sum()
-    max_price = data['close'].max()
-    min_price = data['close'].min()
-
-    # Layout dashboard
-    col1, col2, col3 = st.columns(3)
-
-    with col1:
-        st.info(f"**Total Volume:**\n\n{total_volume} ")
-
-    with col2:
-        st.success(f"**Max Price:**\n\n{max_price} USD")
-
-    with col3:
-        st.warning(f"**Min Price:**\n\n{min_price} USD")
-
-    if option == 'Close':
-        st.write('Close Price')
-        st.line_chart(data.close)
-
-    elif option == 'BB':
-        st.write('BollingerBands')
-        st.line_chart(bb)
-
-    if option_stock_name == 'TSLA':
-        embed_image('./asset/image/logo-tesla.jpg')
-        display_file_content("./info_stock/tsla.txt")
-
-    elif option_stock_name == '7203.T':
-        embed_image('./asset/image/logo-toyota.png')
-        display_file_content("./info_stock/toyota.txt")
-    elif option_stock_name == 'BMW.DE':
-        embed_image('./asset/image/logo-bmw.jpg')
-        display_file_content("./info_stock/bmw.txt")
-    elif option_stock_name == 'VOW3.DE':
-        embed_image('./asset/image/logo-wow.jpg')
-        display_file_content("./info_stock/wow3.txt")
-    else:
-        embed_image('./asset/image/logo-ford.jpg')
-        display_file_content("./info_stock/ford.txt")
-    # Chạy hàm trang thống kê mô tả
-def statistical_des():
-    st.header("Thống kê mô tả")
-    st.subheader("Các chỉ số cơ bản")
-    st.dataframe(data.describe(),width=13*80)
-    stock_statistic_dv = DESCRIPTIVE_STATISTICS(data)
-    st.subheader("Kiểm tra sự khác biệt các biến")
-    with st.expander("Trung bình giá giao dịch theo tháng"):
-        sub_month = stock_statistic_dv.analyze_monthly_average()
-        st.plotly_chart(stock_statistic_dv.plot_monthly_average_bar_chart(sub_month))
-    with st.expander("Trung bình giá giao dịch theo năm"):
-        st.plotly_chart(stock_statistic_dv.plot_yearly_average_line_chart())
-        fig_heatmap, fig_pairplot = stock_statistic_dv.relationship_correlation()
-    with st.expander("Heatmap"):
-        st.plotly_chart(fig_heatmap)
-    with st.expander("Pairplot"):
-        st.plotly_chart(fig_pairplot)
-    st.subheader("Phân phối cổ phiếu")
-    with st.expander("Histogram"):
-        fig_distribution, skewness = stock_statistic_dv.distribution_closeprice()
-        st.plotly_chart(fig_distribution)
-        st.write("Độ xiên close price:", skewness)
-    st.subheader("Cổ phiếu 2023")
-    with st.expander("Trung bình close prices theo tháng năm 2023"):
-        st.plotly_chart(stock_statistic_dv.plot_close_prices_2023_bymonth())
-    st.subheader("So sánh với các năm")
-    with st.expander("Trung bình giá đóng cửa theo tháng và năm (2021, 2022, 2023)"):
-        st.plotly_chart(stock_statistic_dv.plot_close_price_comparision())
-    with st.expander("Tỷ suất lợi nhuận"):
-        st.plotly_chart(stock_statistic_dv.plot_profit_margin_comparison())
-    # Chạy hàm chuỗi thời gian
-def TimeSeries():
-    st.header('Phân tích các yếu tố chuỗi thời gian')
-    st.dataframe(data.tail(10),width=13*80)
-    time_analyzer = TIME_SERIES(data)
-    tab_time1,tab_time2,tab_time3 = st.tabs(["📈 Trung hạn", "📈 Dài hạn", "📈 Theo quý"])
-    with tab_time1:
-        fig_trend, fig_seasonal, fig_residual = time_analyzer.decompose_and_plot()
-        st.plotly_chart(fig_trend)
-        st.plotly_chart(fig_seasonal)
-        st.plotly_chart(fig_residual)
-    with tab_time2:
-        st.plotly_chart(time_analyzer.plot_close_price_by_year())
-        fig_original_long, fig_trend_long, fig_seasonal_long, fig_residual_long = time_analyzer.plot_seasonal_decomposition_byyear()
-        st.plotly_chart(fig_original_long)
-        st.plotly_chart(fig_trend_long)
-        st.plotly_chart(fig_seasonal_long)
-        st.plotly_chart(fig_residual_long)
-    with tab_time3:
-        fig_seasonal_qt, fig_trend_qt, fig_residual_qt, fig_acf_qt = time_analyzer.plot_seasonal_decomposition_and_acf()
-        st.plotly_chart(fig_seasonal_qt)
-        st.plotly_chart(fig_trend_qt)
-        st.plotly_chart(fig_residual_qt)
-        st.plotly_chart(fig_acf_qt)
-    # Chạy hàm mô hình    
-def predict():
-    st.header("Dự báo giá cổ phiếu (Stock Price Prediction)")
-    col_predict_1, col_predict_2 = st.columns(2)
-    with col_predict_1:
-        model = st.radio('Chọn mô hình', [
-                         'Holt Winter', 'Holt', 'Exponential Smoothing', 'Simple Moving Average'])
-    with col_predict_2:
-        option_time = st.radio('Chọn thời gian dự đoán:', [
-                               '1 ngày', '1 tuần', '1 tháng', 'Khác'])
-    if option_time == '1 ngày':
-        num = 1
-    elif option_time == '1 tuần':
-        num = 7
-    elif option_time == '1 tháng':
-        num = 30
-    else:
-        num = st.number_input('How many days forecast?', value=5)
-    num = int(num)
-
-    if st.button('Predict'):
-        model_trainer = TRAIN_MODELS(data)
-        if model == 'Holt Winter':
-            best_alpha_optuna_hw, best_beta_optuna_hw, best_gamma_optuna_hw, best_seasonal_optuna_hw, mae_best_holtwinter_hw = model_trainer.optimize_holtwinter(
-                seasonal_periods=60, n_trials=100)
-            forecast_values_hw = model_trainer.fit_optimal_holtwinter_model(
-                best_alpha_optuna_hw, best_beta_optuna_hw, best_gamma_optuna_hw, 60, best_seasonal_optuna_hw, steps=num)
-            tab1, tab2, tab3 = st.tabs(
-                ["📈 Chart train", "📈 Chart predict", "🗃 Data"])
-            with tab1:
-                st.plotly_chart(model_trainer.plot_holtwinter_results())
-                model_trainer.evaluate_model(
-                    columns=model_trainer.closedf['Holt_Winters_Optimal'])
-            with tab2:
-                st.plotly_chart(model_trainer.plot_forecast_holtwinter_results(
-                    forecast_values=forecast_values_hw))
-            with tab3:
-                forecast_pred = forecast_values_hw.values
-                day = 1
-                for i in forecast_pred:
-                    st.text(f'Day {day}: {i}')
-                    day += 1
-        elif model == 'Holt':
-            best_alpha_optuna, best_beta_optuna, mae_best_holt = model_trainer.optimize_alpha_beta_optuna(
-                n_trials=200)
-            forecast_values_holt = model_trainer.fit_optimal_holt_model(
-                best_alpha_optuna, best_beta_optuna, steps=num)
-            tab1, tab2, tab3 = st.tabs(
-                ["📈 Chart train", "📈 Chart predict", "🗃 Data"])
-            with tab1:
-                st.plotly_chart(model_trainer.plot_holt_results())
-                model_trainer.evaluate_model(
-                    columns=model_trainer.closedf['Holt_Optimal_Optuna'])
-            with tab2:
-                st.plotly_chart(model_trainer.plot_forecast_holt_results(
-                    forecast_values=forecast_values_holt))
-            with tab3:
-                forecast_pred = forecast_values_holt.values
-                day = 1
-                for i in forecast_pred:
-                    st.text(f'Day {day}: {i}')
-                    day += 1
-        elif model == 'Exponential Smoothing':
-            best_alpha_optuna, mae = model_trainer.optimize_alpha_optuna(
-                n_trials=100)
-            forecast_values = model_trainer.fit_optimal_ses_model(
-                best_alpha_optuna, steps=num)
-            tab1, tab2, tab3 = st.tabs(
-                ["📈 Chart train", "📈 Chart predict", "🗃 Data"])
-            with tab1:
-                st.plotly_chart(model_trainer.plot_ses_results())
-                model_trainer.evaluate_model(
-                    columns=model_trainer.closedf['SES_Optimal_Optuna'])
-            with tab2:
-                st.plotly_chart(model_trainer.plot_ses_forecast_results(
-                    forecast_values=forecast_values))
-            with tab3:
-                forecast_pred = forecast_values.values
-                day = 1
-                for i in forecast_pred:
-                    st.text(f'Day {day}: {i}')
-                    day += 1
+        if option == 'Trực quan':
+            self.introduction_stock()
+        elif option == 'Thống kê mô tả':
+            self.statistical_des()
+        elif option == 'Phân tách Times Series':
+            self.TimeSeries()
         else:
-            model_trainer.closedf['Predict'] = model_trainer.dynamic_moving_average(
-                window_size=num)
-            tab1, tab2, tab3 = st.tabs(
-                ["📈 Chart train", "📈 Chart predict", "🗃 Data"])
-            with tab1:
-                fig_movingaverage = model_trainer.plot_dynamic_moving_average_acuracy(window_size=num)
-                st.plotly_chart(fig_movingaverage)
-                model_trainer.evaluate_dynamic_moving_average(window_size=num)
-            with tab2:
-                fig_movingaverage2 = model_trainer.plot_dynamic_moving_average(
-                    window_size=num)
-                st.plotly_chart(fig_movingaverage2)
-            with tab3:
-                forecast_pred = model_trainer.closedf['Predict'][-num:]
-                day = 1
-                for i in forecast_pred:
-                    st.text(f'Day {day}: {i}')
-                    day += 1
+            self.predict()
+    def embed_image(self, file_path):
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        full_file_path = os.path.join(current_dir, file_path)
+        with open(full_file_path, "rb") as image_file:
+            encoded_image = base64.b64encode(image_file.read()).decode("utf-8")
+        html_code = f"""
+        <div style="display: flex; justify-content: center;">
+            <img src='data:image/jpeg;base64,{encoded_image}' alt='Ten_Hinh_Anh' width='100%' style='border-radius:60%; margin-bottom:5%;'>
+        </div>
+        """
+        st.markdown(html_code, unsafe_allow_html=True)
 
+    def display_file_content(self, file_path):
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        full_file_path = os.path.join(current_dir, file_path)
+
+        if os.path.exists(full_file_path):
+            with open(full_file_path, "r", encoding="utf-8") as file:
+                try:
+                    lines = file.readlines()
+                    content = "\n".join(lines).strip()
+                    st.info(f"### Giới thiệu\n{content}")
+                except UnicodeDecodeError:
+                    st.error(
+                        f"Tệp tin '{full_file_path}' không thể đọc với encoding utf-8.")
+        else:
+            st.error(f"Tệp tin '{full_file_path}' không tồn tại.")
+    def select_stock_options(self):
+        st.sidebar.subheader('Mã cổ phiếu và thời gian')
+        self.option_stock_name = st.sidebar.selectbox('Chọn mã cổ phiếu', self.stock_options)
+
+        # Chuyển đổi mã cổ phiếu thành chữ hoa để đảm bảo tính nhất quán
+        self.option_stock_name = self.option_stock_name.upper()
+        today = datetime.date.today()
+
+        with st.sidebar.container():
+            expander = st.expander("Times Select")
+            with expander:
+                self.duration_input()
+
+        if st.sidebar.button('Send'):
+            if self.start_date < self.end_date:
+                st.sidebar.success('Start date: `%s`\n\nEnd date: `%s`' % (self.start_date, self.end_date))
+                self.data = self.download_data()
+                st.write(self.data.head())
+            else:
+                st.sidebar.error('Error: End date must fall after start date')
+
+    def duration_input(self):
+        duration = st.number_input('Enter the duration', value=1824)
+        before = datetime.date.today() - datetime.timedelta(days=duration)
+        self.start_date = st.date_input('Start Date', value=before)
+        self.end_date = st.date_input('End date', datetime.date.today())
+        duration_2 = (self.end_date - self.start_date).days
+        st.info(f"Final duration: {duration_2} days")
+
+    def clean_dataframe(self, dataframe):
+        dataframe = dataframe.rename(columns={'Date': 'date', 'Open': 'open', 'High': 'high',
+                                             'Low': 'low', 'Close': 'close', 'Adj Close': 'adj_close', 'Volume': 'volume'})
+        dataframe['date'] = pd.to_datetime(dataframe.index, errors='coerce')
+        dataframe = dataframe.dropna()
+        dataframe = dataframe.drop_duplicates()
+        dataframe = dataframe.reset_index(drop=True)
+        return dataframe
+    # Chạy hàm trang giới thiệu
+    def introduction_stock(self):
+        if self.option_stock_name == 'TSLA':
+            st.header("Tesla, Inc. (TSLA)")
+        elif self.option_stock_name == '7203.T':
+            st.header("Toyota Motor Corporation (7203.T)")
+        elif self.option_stock_name == 'BMW.DE':
+            st.header("BMW AG (BMW.DE)")
+        elif self.option_stock_name == 'VOW3.DE':
+            st.header("Volkswagen AG (VOW3.DE)")
+        else:
+            st.header("Ford Motor Company (F)")
+            
+        option = st.radio('Choose a Technical Indicator to Visualize', ['Close', 'BB'])
+
+        # Bollinger bands
+        bb_indicator = BollingerBands(self.data.close)
+        bb = self.data
+        bb['bb_h'] = bb_indicator.bollinger_hband()
+        bb['bb_l'] = bb_indicator.bollinger_lband()
+        # Creating a new dataframe
+        bb = bb[['close', 'bb_h', 'bb_l']]
+        total_volume = self.data['volume'].sum()
+        max_price = self.data['close'].max()
+        min_price = self.data['close'].min()
+
+        # Layout dashboard
+        col1, col2, col3 = st.columns(3)
+
+        with col1:
+            st.info(f"**Total Volume:**\n\n{total_volume} ")
+
+        with col2:
+            st.success(f"**Max Price:**\n\n{max_price} USD")
+
+        with col3:
+            st.warning(f"**Min Price:**\n\n{min_price} USD")
+
+        if option == 'Close':
+            st.write('Close Price')
+            st.line_chart(self.data.close)
+
+        elif option == 'BB':
+            st.write('BollingerBands')
+            st.line_chart(bb)
+
+        if self.option_stock_name == 'TSLA':
+            self.embed_image('../asset/image/logo-tesla.jpg')
+            self.display_file_content("../info_stock/tsla.txt")
+
+        elif self.option_stock_name == '7203.T':
+            self.embed_image('../asset/image/logo-toyota.png')
+            self.display_file_content("../info_stock/toyota.txt")
+        elif self.option_stock_name == 'BMW.DE':
+            self.embed_image('../asset/image/logo-bmw.jpg')
+            self.display_file_content("../info_stock/bmw.txt")
+        elif self.option_stock_name == 'VOW3.DE':
+            self.embed_image('../asset/image/logo-wow.jpg')
+            self.display_file_content("../info_stock/wow3.txt")
+        else:
+            self.embed_image('../asset/image/logo-ford.jpg')
+            self.display_file_content("../info_stock/ford.txt")
+    # Chạy hàm trang thống kê mô tả
+    def statistical_des(self):
+        st.header("Thống kê mô tả")
+        st.subheader("Các chỉ số cơ bản")
+        st.dataframe(self.data.describe(), width=13*80)
+        stock_statistic_dv = DESCRIPTIVE_STATISTICS(self.data)
+        st.subheader("Kiểm tra sự khác biệt các biến")
+
+        with st.expander("Trung bình giá giao dịch theo tháng"):
+            sub_month = stock_statistic_dv.analyze_monthly_average()
+            st.plotly_chart(stock_statistic_dv.plot_monthly_average_bar_chart(sub_month))
+
+        with st.expander("Trung bình giá giao dịch theo năm"):
+            st.plotly_chart(stock_statistic_dv.plot_yearly_average_line_chart())
+            fig_heatmap, fig_pairplot = stock_statistic_dv.relationship_correlation()
+
+        with st.expander("Heatmap"):
+            st.plotly_chart(fig_heatmap)
+
+        with st.expander("Pairplot"):
+            st.plotly_chart(fig_pairplot)
+
+        st.subheader("Phân phối cổ phiếu")
+
+        with st.expander("Histogram"):
+            fig_distribution, skewness = stock_statistic_dv.distribution_closeprice()
+            st.plotly_chart(fig_distribution)
+            st.write("Độ xiên close price:", skewness)
+
+        st.subheader("Cổ phiếu 2023")
+
+        with st.expander("Trung bình close prices theo tháng năm 2023"):
+            st.plotly_chart(stock_statistic_dv.plot_close_prices_2023_bymonth())
+
+        st.subheader("So sánh với các năm")
+
+        with st.expander("Trung bình giá đóng cửa theo tháng và năm (2021, 2022, 2023)"):
+            st.plotly_chart(stock_statistic_dv.plot_close_price_comparision())
+
+        with st.expander("Tỷ suất lợi nhuận"):
+            st.plotly_chart(stock_statistic_dv.plot_profit_margin_comparison())
+    # Chạy hàm chuỗi thời gian
+    def TimeSeries(self):
+        st.header('Phân tích các yếu tố chuỗi thời gian')
+        st.dataframe(self.data.tail(10), width=13*80)
+        time_analyzer = TIME_SERIES(self.data)
+        tab_time1, tab_time2, tab_time3 = st.tabs(["📈 Trung hạn", "📈 Dài hạn", "🗃 Data"])
+
+        with tab_time1:
+            fig_trend, fig_seasonal, fig_residual = time_analyzer.decompose_and_plot()
+            st.plotly_chart(fig_trend)
+            st.plotly_chart(fig_seasonal)
+            st.plotly_chart(fig_residual)
+
+        with tab_time2:
+            st.plotly_chart(time_analyzer.plot_close_price_by_year())
+            fig_original_long, fig_trend_long, fig_seasonal_long, fig_residual_long = time_analyzer.plot_seasonal_decomposition_byyear()
+            st.plotly_chart(fig_original_long)
+            st.plotly_chart(fig_trend_long)
+            st.plotly_chart(fig_seasonal_long)
+            st.plotly_chart(fig_residual_long)
+
+        with tab_time3:
+            fig_seasonal_qt, fig_trend_qt, fig_residual_qt, fig_acf_qt = time_analyzer.plot_seasonal_decomposition_and_acf()
+            st.plotly_chart(fig_seasonal_qt)
+            st.plotly_chart(fig_trend_qt)
+            st.plotly_chart(fig_residual_qt)
+            st.plotly_chart(fig_acf_qt)
+    # Chạy hàm mô hình    
+    def predict(self):
+        st.header("Dự báo giá cổ phiếu (Stock Price Prediction)")
+        col_predict_1, col_predict_2 = st.columns(2)
+        with col_predict_1:
+            self.model = st.radio('Chọn mô hình', [
+                                 'Holt Winter', 'Holt', 'Exponential Smoothing', 'Simple Moving Average'])
+        with col_predict_2:
+            self.option_time = st.radio('Chọn thời gian dự đoán:', [
+                                        '1 ngày', '1 tuần', '1 tháng', 'Khác'])
+        if self.option_time == '1 ngày':
+            num = 1
+        elif self.option_time == '1 tuần':
+            num = 7
+        elif self.option_time == '1 tháng':
+            num = 30
+        else:
+            num = st.number_input('How many days forecast?', value=5)
+        num = int(num)
+
+        if st.button('Predict'):
+            model_trainer = TRAIN_MODELS(self.data)
+            if self.model == 'Holt Winter':
+                best_alpha_optuna_hw, best_beta_optuna_hw, best_gamma_optuna_hw, best_seasonal_optuna_hw, mae_best_holtwinter_hw = model_trainer.optimize_holtwinter(
+                    seasonal_periods=60, n_trials=100)
+                forecast_values_hw = model_trainer.fit_optimal_holtwinter_model(
+                    best_alpha_optuna_hw, best_beta_optuna_hw, best_gamma_optuna_hw, 60, best_seasonal_optuna_hw, steps=num)
+                tab1, tab2, tab3 = st.tabs(
+                    ["📈 Chart train", "📈 Chart predict", "🗃 Data"])
+                with tab1:
+                    st.plotly_chart(model_trainer.plot_holtwinter_results())
+                    model_trainer.evaluate_model(
+                        columns=model_trainer.closedf['Holt_Winters_Optimal'])
+                with tab2:
+                    st.plotly_chart(model_trainer.plot_forecast_holtwinter_results(
+                        forecast_values=forecast_values_hw))
+                with tab3:
+                    forecast_pred = forecast_values_hw.values
+                    day = 1
+                    for i in forecast_pred:
+                        st.text(f'Day {day}: {i}')
+                        day += 1
+            elif self.model == 'Holt':
+                best_alpha_optuna, best_beta_optuna, mae_best_holt = model_trainer.optimize_alpha_beta_optuna(
+                    n_trials=200)
+                forecast_values_holt = model_trainer.fit_optimal_holt_model(
+                    best_alpha_optuna, best_beta_optuna, steps=num)
+                tab1, tab2, tab3 = st.tabs(
+                    ["📈 Chart train", "📈 Chart predict", "🗃 Data"])
+                with tab1:
+                    st.plotly_chart(model_trainer.plot_holt_results())
+                    model_trainer.evaluate_model(
+                        columns=model_trainer.closedf['Holt_Optimal_Optuna'])
+                with tab2:
+                    st.plotly_chart(model_trainer.plot_forecast_holt_results(
+                        forecast_values=forecast_values_holt))
+                with tab3:
+                    forecast_pred = forecast_values_holt.values
+                    day = 1
+                    for i in forecast_pred:
+                        st.text(f'Day {day}: {i}')
+                        day += 1
+            elif self.model == 'Exponential Smoothing':
+                best_alpha_optuna, mae = model_trainer.optimize_alpha_optuna(
+                    n_trials=100)
+                forecast_values = model_trainer.fit_optimal_ses_model(
+                    best_alpha_optuna, steps=num)
+                tab1, tab2, tab3 = st.tabs(
+                    ["📈 Chart train", "📈 Chart predict", "🗃 Data"])
+                with tab1:
+                    st.plotly_chart(model_trainer.plot_ses_results())
+                    model_trainer.evaluate_model(
+                        columns=model_trainer.closedf['SES_Optimal_Optuna'])
+                with tab2:
+                    st.plotly_chart(model_trainer.plot_ses_forecast_results(
+                        forecast_values=forecast_values))
+                with tab3:
+                    forecast_pred = forecast_values.values
+                    day = 1
+                    for i in forecast_pred:
+                        st.text(f'Day {day}: {i}')
+                        day += 1
+            else:
+                model_trainer.closedf['Predict'] = model_trainer.dynamic_moving_average(
+                    window_size=num)
+                tab1, tab2, tab3 = st.tabs(
+                    ["📈 Chart train", "📈 Chart predict", "🗃 Data"])
+                with tab1:
+                    fig_movingaverage = model_trainer.plot_dynamic_moving_average_acuracy(
+                        window_size=num)
+                    st.plotly_chart(fig_movingaverage)
+                    model_trainer.evaluate_dynamic_moving_average(
+                        window_size=num)
+                with tab2:
+                    fig_movingaverage2 = model_trainer.plot_dynamic_moving_average(
+                        window_size=num)
+                    st.plotly_chart(fig_movingaverage2)
+                with tab3:
+                    forecast_pred = model_trainer.closedf['Predict'][-num:]
+                    day = 1
+                    for i in forecast_pred:
+                        st.text(f'Day {day}: {i}')
+                        day += 1
+    @st.cache_resource
+    def download_data(_self, op, start_date, end_date):
+        df = yf.download(op, start=start_date, end=end_date, progress=False)
+        return df
+# Bắt đầu thực thi 
+app = MAINCLASS()
+app.run()
+app.select_stock_options()
+data = app.download_data(app.option_stock_name,app.start_date,app.end_date)
+data = app.clean_dataframe(dataframe=data)
+app.data = data
 # Thực thi hàm main
 if __name__ == '__main__':
-    main()
+    app.main()
 st.sidebar.markdown(  """
     ---
     """)
