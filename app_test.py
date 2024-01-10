@@ -767,21 +767,21 @@ class MAINCLASS:
             st.line_chart(bb)
 
         if self.option_stock_name == 'TSLA':
-            self.embed_image('../asset/image/logo-tesla.jpg')
-            self.display_file_content("../info_stock/tsla.txt")
+            self.embed_image('./asset/image/logo-tesla.jpg')
+            self.display_file_content("./info_stock/tsla.txt")
 
         elif self.option_stock_name == '7203.T':
-            self.embed_image('../asset/image/logo-toyota.png')
-            self.display_file_content("../info_stock/toyota.txt")
+            self.embed_image('./asset/image/logo-toyota.png')
+            self.display_file_content("./info_stock/toyota.txt")
         elif self.option_stock_name == 'BMW.DE':
-            self.embed_image('../asset/image/logo-bmw.jpg')
-            self.display_file_content("../info_stock/bmw.txt")
+            self.embed_image('./asset/image/logo-bmw.jpg')
+            self.display_file_content("./info_stock/bmw.txt")
         elif self.option_stock_name == 'VOW3.DE':
-            self.embed_image('../asset/image/logo-wow.jpg')
-            self.display_file_content("../info_stock/wow3.txt")
+            self.embed_image('./asset/image/logo-wow.jpg')
+            self.display_file_content("./info_stock/wow3.txt")
         else:
-            self.embed_image('../asset/image/logo-ford.jpg')
-            self.display_file_content("../info_stock/ford.txt")
+            self.embed_image('./asset/image/logo-ford.jpg')
+            self.display_file_content("./info_stock/ford.txt")
     # Chạy hàm trang thống kê mô tả
     def statistical_des(self):
         st.header("Thống kê mô tả")
