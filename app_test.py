@@ -30,7 +30,7 @@ from statsmodels.graphics.tsaplots import plot_acf
 from statsmodels.tsa.stattools import acf
 
 st.set_page_config(layout='wide',page_title="Stock Prediction", initial_sidebar_state='expanded')
-# Class thống kê mô tả
+# Class thống kê mô tả :
 class DESCRIPTIVE_STATISTICS:
     def __init__(self, df):
         self.df = df
