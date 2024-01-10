@@ -11,7 +11,7 @@ from sklearn.preprocessing import StandardScaler
 import plotly.express as px
 import plotly.graph_objects as go
 import plotly.figure_factory as ff
-import plantuml
+
 
 import os
 import numpy as np
