@@ -957,7 +957,7 @@ class MAINCLASS:
     def download_data(_self, op, start_date, end_date):
         df = yf.download(op, start=start_date, end=end_date, progress=False)
         return df
-# Bắt đầu thực thi 
+# Bắt đầu thực thi class
 app = MAINCLASS()
 app.run()
 app.select_stock_options()
