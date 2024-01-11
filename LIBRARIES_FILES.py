@@ -637,7 +637,7 @@ class MAINCLASS:
             </div>
             """, unsafe_allow_html=True)
 
-        st.sidebar.info('❤️Chào mừng đến với dự án❤️')
+        st.sidebar.info('❤️Chào mừng đến với dự án❤️❤️')
         st.sidebar.markdown("---")
     def main(self):
         st.sidebar.subheader('Lựa chọn tác vụ')
