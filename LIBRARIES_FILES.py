@@ -633,7 +633,11 @@ class MAINCLASS:
 
         st.sidebar.markdown("""
             <div style="display: flex; justify-content: center;margin-bottom:0">
+<<<<<<< HEAD
                 <img src='./asset/image/image_industry.jpg' alt='Ten_Hinh_Anh' width='60%' style='border-radius:50%;margin-bottom:12%;'>
+=======
+                <img src='../asset/image/image_industry.jpg' alt='Ten_Hinh_Anh' width='60%' style='border-radius:50%;margin-bottom:12%;'>
+>>>>>>> 3c02608a0f8cb99f0da09c6bc371d873329232ac
             </div>
             """, unsafe_allow_html=True)
 
