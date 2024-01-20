@@ -630,10 +630,13 @@ class MAINCLASS:
         st.sidebar.markdown("""
             <h1 style='font-size:35px;text-align:center'>TEAM 1</h1>
         """, unsafe_allow_html=True)
-        image = self.embed_image('./asset/image/logo-tesla.jpg')
+
         st.sidebar.markdown("""
             <div style="display: flex; justify-content: center;margin-bottom:0">
-                <img src='{image}' alt='Ten_Hinh_Anh' width='60%' style='border-radius:50%;margin-bottom:12%;'>
+<<<<<<< HEAD
+                <img src='./asset/image/image_industry.jpg' alt='Ten_Hinh_Anh' width='60%' style='border-radius:50%;margin-bottom:12%;'>
+=======
+
             </div>
             """, unsafe_allow_html=True)
 
