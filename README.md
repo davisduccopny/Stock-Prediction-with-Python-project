@@ -10,99 +10,98 @@
 
 </div>
 
-## Những việc sẽ làm (Table of contents)
-- [Cài Đặt](#cách-cài-đặt-installation)
-- [Mục đích dự án](#mục-đích-dự-án-project-purpose)
-- [Sử Dụng](#cách-sử-dụng-usage)
-- [Cấu trúc thư mục](#cấu-trúc-thư-mục-directory-structure)
-- [Đóng Góp](#đóng-góp-contribution)
-- [Tác giả](#tác-giả-author)
-- [Bản Quyền](#giấy-phép-license)
+## Table of contents
+- [Install](#cách-cài-đặt-installation)
+- [Project Perpose](#mục-đích-dự-án-project-purpose)
+- [Usage](#cách-sử-dụng-usage)
+- [Directory Structure](#cấu-trúc-thư-mục-directory-structure)
+- [Contribution](#đóng-góp-contribution)
+- [Author](#tác-giả-author)
+- [License](#giấy-phép-license)
 
-## Mục Đích Dự Án (project purpose)
+## Project purpose
 
-Dự án này tập trung vào việc phát triển một hệ thống dự đoán giá cổ phiếu bằng Python. Chúng ta sẽ sử dụng các kỹ thuật học máy để phân tích dữ liệu lịch sử và dự đoán xu hướng giá cổ phiếu trong tương lai.
+This project focuses on developing a stock price prediction system using Python. We will use machine learning techniques to analyze historical data and predict future stock price trends.
 
-## Cách Cài Đặt (Installation)
+## Installation
 
-1. Clone dự án về máy local của bạn (Clone the project to your local machine:):
+1. Clone the project to your local machine:
 
     ```bash
     git clone https://github.com/davisduccopny/Stock-Prediction-with-Python-project.git
     ```
 
-2. Di chuyển vào thư mục dự án (Navigate to the project directory:) :
+2. Navigate to the project directory:
 
     ```bash
     cd Stock-Prediction-with-Python-project
     ```
 
-3. Tạo môi trường ảo (nếu cần) (Create a virtual environment (if needed)):
+3. Create a virtual environment (if needed):
 
     ```bash
     virtualenv venv
     ```
 
-4. Kích hoạt môi trường ảo (Activate the virtual environment):
+4. Activate the virtual environment:
 
-    - Trên Windows (On Windows):
+    - On Windows:
 
         ```bash
         venv\Scripts\activate
         ```
 
-    - Trên macOS/Linux (On macOS/Linux):
+    - On macOS/Linux:
 
         ```bash
         source venv/bin/activate
         ```
-    - Trên môi trường streamlit (For the streamlit environment):
+    - For the streamlit environment:
         ```bash
         pip freeze > requirements.txt
         ```
-5. Cài đặt các thư viện cần thiết (Install the necessary libraries):
+5. Install the necessary libraries:
 
     ```bash
     pip install -r requirements.txt
     ```
 
-## Cách Sử Dụng (Usage)
+## Usage
 
-1. Chạy notebook `main_train.ipynb` để xem quy trình dự đoán chi tiết (view the detailed prediction process).
+1. Run notebook `main_train.ipynb` to view the detailed prediction process.
 
-2. Tùy chỉnh các tham số và mô hình theo nhu cầu của bạn (Customize parameters and models according to your needs). 
+2. Customize parameters and models according to your needs. 
 
-3. Theo dõi các kết quả dự đoán và điều chỉnh mô hình để cải thiện hiệu suất (Monitor prediction results and adjust the model to improve performance).
+3. Monitor prediction results and adjust the model to improve performance.
 
-## Cấu Trúc Thư Mục (Directory Structure)
+## Directory Structure
 
-- `dataset/`: Chứa dữ liệu lịch sử về giá cổ phiếu (Contains historical stock price data).
-- `train_folder/`: Chứa các notebook Jupyter cho phân tích và dự đoán ( Contains Jupyter notebooks for analysis and prediction).
-- `asset/image/`: Lưu trữ ảnh của dự án (Stores project images)
-- `info_stock/`: Lưu trữ thông tin cổ phiếu (Stores stock information).
-- `introduction`: Bản thảo word của dự án (Word draft of the project).
-- `app_test.py`: Tệp chứa giao diện demo thuật toán (The file contains the algorithm demo interface)
+- `dataset/`: Contains historical stock price data.
+- `train_folder/`: Contains Jupyter notebooks for analysis and prediction.
+- `asset/image/`: Stores project images
+- `info_stock/`: Stores stock information.
+- `introduction`: Word draft of the project.
+- `app_test.py`: The file contains the algorithm demo interface
 
-## Đóng Góp (Contribution)
+## Contribution
 
-Nếu bạn muốn đóng góp vào dự án, hãy tạo một nhánh mới và gửi yêu cầu kéo (pull request). Chúng ta sẽ rất vui khi nhận được sự đóng góp của bạn!
-(If you want to contribute to the project, create a new branch and submit a pull request. We would be delighted to receive your contributions!)
+If you want to contribute to the project, create a new branch and submit a pull request. We would be delighted to receive your contributions!
 
-## Tác Giả (Author)
+## Author
 
-- Tên (Name): [Data Team - QuocChienDuc]
+- Name: [Data Team - QuocChienDuc]
 - Email: 2156210125@hcmussh.edu.vn
-- Thành viên dự án (Project members):
-    | Tên (Name)           | Mã Sinh Viên (Student Number) | Email                          |
+- Project members:
+    | Name         | Student Number | Email                          |
     |----------------------|-------------------------------|--------------------------------|
     | Hoàng Xuân Quốc      | 2156210125                    | 2156210125@hcmussh.edu.vn      |
     | Đặng Hoàng Chiến     | 2156210095                    | 2156210095@hcmussh.edu.vn      |
     | Nguyễn Viết Đức      | 2156210100                    | 2156210100@hcmussh.edu.vn      |
 - GitHub: [Your GitHub Profile](https://github.com/davisduccopny/)
 
-## Giấy Phép (license)
+## license
 
-Dự án này được phân phối dưới giấy phép [MIT License](LICENSE).
+This project is distributed under license [MIT License](LICENSE).
 
 ---
 Happy coding!
